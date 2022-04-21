@@ -31,6 +31,18 @@ public class PasswordTest
             .Be("Password must have at least one uppercase letter");
     }
 
+    [Fact(DisplayName = "Should return false when password does not have minimum lenght")]
+    public void PasswordIsValid_WhenDoesNotHaveMinimumLenght_ShouldReturnFalse()
+    {
+        var plainTextPassword = "Abcd@12";
+
+        var password = new Password(plainTextPassword);
+
+        password.IsValid().Should().BeFalse();
+        password.ValidationResult?.Errors.First().ErrorMessage.Should()
+            .Be("The length of Password must be at least 8 characters");
+    }
+
     [Fact(DisplayName = "Should return false when password has no number")]
     public void PasswordIsValid_WhenHasNoNumber_ShouldReturnFalse()
     {
