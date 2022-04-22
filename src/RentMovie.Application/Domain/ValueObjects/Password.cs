@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace RentMovie.Application.Domain.ValueObjects;
 
-public class Password : Validatable
+public class Password
 {
     public Password(string password)
     {
@@ -14,12 +14,6 @@ public class Password : Validatable
 
     public string PlainText { get; }
 
-    public override bool IsValid()
-    {
-        ValidationResult = new PasswordValidator().Validate(this);
-        return ValidationResult.IsValid;
-    }
-
     public bool HasMatchWith(string password)
     {
         return BCrypt.Net.BCrypt.Verify(password, Hash);
@@ -28,21 +22,5 @@ public class Password : Validatable
     public bool HasHashMatchWith(string hash)
     {
         return BCrypt.Net.BCrypt.Verify(PlainText, hash);
-    }
-}
-
-public class PasswordValidator : AbstractValidator<Password>
-{
-    public PasswordValidator()
-    {
-        RuleFor(password => password.PlainText)
-            .MinimumLength(8)
-            .WithMessage("The length of Password must be at least 8 characters")
-            .Matches("[A-Z]")
-            .WithMessage("Password must have at least one uppercase letter")
-            .Matches("[0-9]")
-            .WithMessage("Password must have at least one number")
-            .Matches("[!@#$&*]")
-            .WithMessage("Password must have at least one special character: !@#$&*");
     }
 }

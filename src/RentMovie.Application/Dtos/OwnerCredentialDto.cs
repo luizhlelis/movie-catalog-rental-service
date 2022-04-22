@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using RentMovie.Application.Ports;
 
-namespace RentMovie.Application.Domain.Dtos;
+namespace RentMovie.Application.Dtos;
 
 /*  Resource Owner Password Credentials grant type was deprecated by OAuth2.0,
     this should be avoided in a production environment */

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
-using RentMovie.Application.Domain.Dtos;
+using RentMovie.Application.Dtos;
 using RentMovie.Application.Domain.ValueObjects;
 
 namespace RentMovie.Web.Controllers;
