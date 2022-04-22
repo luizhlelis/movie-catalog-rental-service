@@ -39,17 +39,13 @@ public class ModelStateAsyncFilter : IAsyncActionFilter
         foreach (var (_, value) in context.ActionArguments)
         {
             if (value is null)
-            {
                 continue;
-            }
 
             await ValidateAsync(value, context.ModelState);
 
             // if an error is found or the type it not enumerable, short circuit the loop
             if (!context.ModelState.IsValid || !TypeIsEnumerable(value.GetType()))
-            {
                 continue;
-            }
 
             await ValidateEnumerableObjectsAsync(value, context.ModelState);
         }
@@ -61,16 +57,12 @@ public class ModelStateAsyncFilter : IAsyncActionFilter
         var validator = _validatorFactory.GetValidator(underlyingType);
 
         if (validator == null)
-        {
             return;
-        }
 
         foreach (var item in (IEnumerable)value)
         {
             if (item is null)
-            {
                 continue;
-            }
 
             var context = new ValidationContext<object>(item);
             var result = await validator.ValidateAsync(context);
@@ -84,9 +76,7 @@ public class ModelStateAsyncFilter : IAsyncActionFilter
         var validator = _validatorFactory.GetValidator(value.GetType());
 
         if (validator == null)
-        {
             return;
-        }
 
         var context = new ValidationContext<object>(value);
         var result = await validator.ValidateAsync(context);
