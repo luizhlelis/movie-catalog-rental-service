@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using RentMovie.Application.Domain.Dtos;
 using RentMovie.Application.Domain.ValueObjects;
 
 namespace RentMovie.Web.Controllers;
@@ -17,7 +18,7 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("token")]
-    public IActionResult Token([FromBody] OwnerCredential credential)
+    public IActionResult Token([FromBody] OwnerCredentialDto credential)
     {
         var accessToken = _authentication.GenerateAccessToken(credential.Username);
         return Ok(

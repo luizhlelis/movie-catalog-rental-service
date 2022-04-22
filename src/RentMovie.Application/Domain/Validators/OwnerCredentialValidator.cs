@@ -1,21 +1,13 @@
 ﻿using FluentValidation;
+using RentMovie.Application.Domain.Dtos;
+using RentMovie.Application.Domain.ValueObjects;
 using RentMovie.Application.Ports;
 
-namespace RentMovie.Application.Domain.ValueObjects;
+namespace RentMovie.Application.Domain.Validators;
 
-/*  Resource Owner Password Credentials grant type was deprecated by OAuth2.0,
-    this should be avoided in a production environment */
-
-public class OwnerCredential
+public class OwnerCredentialValidator : AbstractValidator<OwnerCredentialDto>
 {
-    public string Username { get; set; }
-
-    public string Password { get; set; }
-}
-
-public class OwnerCredentialsValidator : AbstractValidator<OwnerCredential>
-{
-    public OwnerCredentialsValidator(IDatabaseDrivenPort databaseDrivenPort)
+    public OwnerCredentialValidator(IDatabaseDrivenPort databaseDrivenPort)
     {
         RuleFor(credentials => credentials.Username)
             .NotEmpty();
@@ -28,7 +20,7 @@ public class OwnerCredentialsValidator : AbstractValidator<OwnerCredential>
             .WithMessage("User or password mismatch")
             .WithErrorCode(ErrorCode.Forbidden);
 
-        async Task<bool> AreCredentialsValid(OwnerCredential credentials,
+        async Task<bool> AreCredentialsValid(OwnerCredentialDto credentials,
             CancellationToken cancellationToken)
         {
             var incomingPassword = new Password(credentials.Password);

@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using RentMovie.Application.Domain;
+using RentMovie.Application.Domain.Dtos;
+using RentMovie.Application.Domain.Validators;
 using RentMovie.Application.Domain.ValueObjects;
 using RentMovie.Application.Ports;
 using RentMovie.Infrastructure.Adapters;
@@ -66,7 +68,7 @@ public class Startup
         // API Validators
         services.AddScoped<IValidatorFactory>(serviceProvider =>
             new ServiceProviderValidatorFactory(serviceProvider));
-        services.AddScoped<IValidator<OwnerCredential>, OwnerCredentialsValidator>();
+        services.AddScoped<IValidator<OwnerCredentialDto>, OwnerCredentialValidator>();
 
         // CORS
         services.AddCors(options =>
