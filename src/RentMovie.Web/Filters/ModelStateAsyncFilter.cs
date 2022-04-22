@@ -1,20 +1,28 @@
 ﻿using System.Collections;
+using System.Diagnostics;
+using System.Net;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using RentMovie.Web.Responses;
 
 namespace RentMovie.Web.Filters;
 
 public class ModelStateAsyncFilter : IAsyncActionFilter
 {
     private readonly IValidatorFactory _validatorFactory;
+    private readonly ApiBehaviorOptions _apiBehaviorOptions;
 
     public ModelStateAsyncFilter(
-        IValidatorFactory validatorFactory)
+        IValidatorFactory validatorFactory,
+        IOptions<ApiBehaviorOptions> apiBehaviorOptions)
     {
         _validatorFactory = validatorFactory;
+        _apiBehaviorOptions = apiBehaviorOptions.Value;
     }
 
     /// <summary>
@@ -27,7 +35,24 @@ public class ModelStateAsyncFilter : IAsyncActionFilter
 
         if (!context.ModelState.IsValid)
         {
-            context.Result = new BadRequestObjectResult(context.ModelState);
+            var responseStatusCode = ErrorResponseFactory.GetResponseStatusCode(context.ModelState);
+
+            if (responseStatusCode == HttpStatusCode.BadRequest)
+            {
+                context.Result = _apiBehaviorOptions.InvalidModelStateResponseFactory(context);
+                return;
+            }
+
+            var errorResponse =
+                ErrorResponseFactory.CreateErrorResponse(context.ModelState,
+                    Activity.Current?.Id ?? context.HttpContext.TraceIdentifier);
+
+            context.HttpContext.Response.StatusCode = (int)responseStatusCode;
+            context.HttpContext.Response.ContentType = "application/json";
+
+            var responseBody = JsonConvert.SerializeObject(errorResponse);
+            await context.HttpContext.Response.WriteAsync(responseBody);
+
             return;
         }
 
@@ -67,7 +92,7 @@ public class ModelStateAsyncFilter : IAsyncActionFilter
             var context = new ValidationContext<object>(item);
             var result = await validator.ValidateAsync(context);
 
-            result.AddToModelState(modelState, string.Empty);
+            result.AddToModelState(modelState, result.Errors?.First().ErrorCode ?? string.Empty);
         }
     }
 
@@ -80,7 +105,8 @@ public class ModelStateAsyncFilter : IAsyncActionFilter
 
         var context = new ValidationContext<object>(value);
         var result = await validator.ValidateAsync(context);
-        result.AddToModelState(modelState, string.Empty);
+        result.AddToModelState(modelState,
+            result.Errors?.FirstOrDefault()?.ErrorCode ?? string.Empty);
     }
 
     private static bool TypeIsEnumerable(Type type)

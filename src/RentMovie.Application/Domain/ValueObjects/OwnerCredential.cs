@@ -24,7 +24,6 @@ public class OwnerCredentialsValidator : AbstractValidator<OwnerCredential>
             .NotEmpty();
 
         RuleFor(credentials => credentials)
-            .NotEmpty()
             .MustAsync(AreCredentialsValid)
             .WithMessage("User or password mismatch")
             .WithErrorCode(ErrorCode.Forbidden);
@@ -32,10 +31,10 @@ public class OwnerCredentialsValidator : AbstractValidator<OwnerCredential>
         async Task<bool> AreCredentialsValid(OwnerCredential credentials,
             CancellationToken cancellationToken)
         {
-            var incomingPasswordHash = new Password(credentials.Password).Hash;
+            var incomingPassword = new Password(credentials.Password);
             var user = await databaseDrivenPort.GetUserAsync(credentials.Username);
 
-            return user is not null && incomingPasswordHash == user.PasswordHash;
+            return user is not null && incomingPassword.HasHashMatchWith(user.PasswordHash);
         }
     }
 }

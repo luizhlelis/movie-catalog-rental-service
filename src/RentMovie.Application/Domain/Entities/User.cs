@@ -17,9 +17,9 @@ public class User : Validatable
     // Empty constructor required for EF
     public User() { }
 
-    [Key] [Required] [MaxLength(20)] public string Username { get; }
+    [Key] [Required] [MaxLength(20)] public string Username { get; private set; }
 
-    [Required] public string PasswordHash { get; }
+    [Required] public string PasswordHash { get; private set; }
 
     [NotMapped] public Password Password { get; }
 

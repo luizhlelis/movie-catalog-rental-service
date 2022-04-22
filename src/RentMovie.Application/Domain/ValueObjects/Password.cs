@@ -20,9 +20,14 @@ public class Password : Validatable
         return ValidationResult.IsValid;
     }
 
-    public bool IsMatch(string password)
+    public bool HasMatchWith(string password)
     {
         return BCrypt.Net.BCrypt.Verify(password, Hash);
+    }
+
+    public bool HasHashMatchWith(string hash)
+    {
+        return BCrypt.Net.BCrypt.Verify(PlainText, hash);
     }
 }
 

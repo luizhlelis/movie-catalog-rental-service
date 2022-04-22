@@ -28,10 +28,9 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services
-            .AddControllers()
-            .AddMvcOptions(mvcOptions =>
+            .AddControllers(options =>
             {
-                mvcOptions.Filters.Add<ModelStateAsyncFilter>();
+                options.Filters.Add<ModelStateAsyncFilter>();
             });
 
         // API versioning
@@ -65,12 +64,9 @@ public class Startup
         services.AddScoped<IDatabaseDrivenPort, DatabaseAdapter>();
 
         // API Validators
-        services
-            .AddFluentValidation(options =>
-                options.RegisterValidatorsFromAssemblyContaining<Validatable>());
-
         services.AddScoped<IValidatorFactory>(serviceProvider =>
             new ServiceProviderValidatorFactory(serviceProvider));
+        services.AddScoped<IValidator<OwnerCredential>, OwnerCredentialsValidator>();
 
         // CORS
         services.AddCors(options =>

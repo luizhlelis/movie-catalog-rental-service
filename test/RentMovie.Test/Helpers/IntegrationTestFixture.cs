@@ -1,10 +1,12 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using RentMovie.Infrastructure.Adapters;
 using RentMovie.Web;
 
@@ -29,6 +31,11 @@ public class IntegrationTestFixture : IDisposable
             .ConfigureTestServices(services =>
             {
                 services.AddSingleton<IConfiguration>(configuration);
+                // remove the existing context configuration
+                var descriptor = services.SingleOrDefault(service =>
+                    service.ServiceType == typeof(DbContextOptions<RentMovieContext>));
+                if (descriptor != null)
+                    services.Remove(descriptor);
                 services.AddDbContext<RentMovieContext>(options =>
                     options.UseInMemoryDatabase("RentMovie"));
             })
