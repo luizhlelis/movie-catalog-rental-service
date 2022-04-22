@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+using RentMovie.Application.Domain.ValueObjects;
 
 namespace RentMovie.Web.Controllers;
 
@@ -7,9 +9,19 @@ namespace RentMovie.Web.Controllers;
 [Route("v{version:apiVersion}/[controller]")]
 public class AuthenticationController : ControllerBase
 {
-    [HttpGet]
-    public IActionResult Get()
+    private readonly Authentication _authentication;
+
+    public AuthenticationController(Authentication authentication)
     {
-        return Ok();
+        _authentication = authentication;
+    }
+
+    [HttpPost("token")]
+    public IActionResult Token([FromBody] OwnerCredential credential)
+    {
+        var accessToken = _authentication.GenerateAccessToken(credential.Username);
+        return Ok(
+            new {TokenType = JwtBearerDefaults.AuthenticationScheme, AccessToken = accessToken}
+        );
     }
 }

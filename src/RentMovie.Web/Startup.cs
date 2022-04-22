@@ -1,7 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using RentMovie.Application.Domain;
+using RentMovie.Application.Domain.ValueObjects;
+using RentMovie.Application.Ports;
+using RentMovie.Infrastructure.Adapters;
+using RentMovie.Web.Filters;
 using RentMovie.Web.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -19,7 +27,12 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddControllers();
+        services
+            .AddControllers()
+            .AddMvcOptions(mvcOptions =>
+            {
+                mvcOptions.Filters.Add<ModelStateAsyncFilter>();
+            });
 
         // API versioning
         services.AddApiVersioning(options =>
@@ -45,6 +58,21 @@ public class Startup
             options.OperationFilter<SwaggerDefaultValues>();
         });
 
+        // Database
+        services.AddDbContext<RentMovieContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("RentMovieContext")));
+
+        services.AddScoped<IDatabaseDrivenPort, DatabaseAdapter>();
+
+        // API Validators
+        services
+            .AddFluentValidation(options =>
+                options.RegisterValidatorsFromAssemblyContaining<Validatable>());
+
+        services.AddScoped<IValidatorFactory>(serviceProvider =>
+            new ServiceProviderValidatorFactory(serviceProvider));
+
+        // CORS
         services.AddCors(options =>
         {
             options.AddPolicy("CorsPolicy",
@@ -53,6 +81,14 @@ public class Startup
                     .AllowAnyMethod()
                     .AllowAnyHeader());
         });
+
+        // Authentication
+        var auth = new Authentication(
+            Configuration["TokenCredentials:Audience"],
+            Configuration["TokenCredentials:Issuer"],
+            Configuration["TokenCredentials:HmacSecretKey"],
+            Configuration["TokenCredentials:ExpireInDays"]);
+        services.AddSingleton(auth);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using FluentValidation;
 using RentMovie.Application.Domain.ValueObjects;
 
 namespace RentMovie.Application.Domain.Entities;
@@ -9,11 +11,17 @@ public class User : Validatable
     {
         Username = username;
         Password = password;
+        PasswordHash = password.Hash;
     }
 
-    public string Username { get; }
+    // Empty constructor required for EF
+    public User() { }
 
-    public Password Password { get; }
+    [Key] [Required] [MaxLength(20)] public string Username { get; }
+
+    [Required] public string PasswordHash { get; }
+
+    [NotMapped] public Password Password { get; }
 
     public override bool IsValid()
     {
