@@ -5,31 +5,28 @@ using RentMovie.Application.Dtos;
 using RentMovie.Application.Domain.Entities;
 using RentMovie.Application.Domain.Enums;
 using RentMovie.Application.Ports;
+using RentMovie.Web.Filters;
 using RentMovie.Web.Responses;
 
 namespace RentMovie.Web.Controllers;
 
 [ApiController]
 [ApiVersion("1.0")]
+[Authorize]
 [Route("v{version:apiVersion}/[controller]")]
-public class UserController : BaseController
+public class UserController : ControllerBase
 {
     private readonly IDatabaseDrivenPort _databaseDrivenPort;
 
-    public UserController(IDatabaseDrivenPort databaseDrivenPort) : base(databaseDrivenPort)
+    public UserController(IDatabaseDrivenPort databaseDrivenPort)
     {
         _databaseDrivenPort = databaseDrivenPort;
     }
 
-    [Authorize]
+    [AuthorizeOnly(Role.Admin)]
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] string username)
     {
-        var requesterUser = await GetRequesterUserAsync();
-
-        if (requesterUser?.Role is not Role.Admin)
-            return Unauthorized();
-
         var user = await _databaseDrivenPort.GetUserAsync(username);
 
         return user is null
@@ -38,11 +35,12 @@ public class UserController : BaseController
             : Ok(user);
     }
 
-    [Authorize]
     [HttpGet("me")]
     public async Task<IActionResult> GetMe()
     {
-        var user = await GetRequesterUserAsync();
+        var requesterUsername =
+            User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
+        var user = await _databaseDrivenPort.GetUserAsync(requesterUsername?.Value ?? "");
 
         return user is null
             ? NotFound(new NotFoundResponse("User not found",
@@ -50,6 +48,7 @@ public class UserController : BaseController
             : Ok(user);
     }
 
+    [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> CreateUser(UserDto userDto)
     {
@@ -58,25 +57,21 @@ public class UserController : BaseController
         return Created("/me", user);
     }
 
-    [Authorize]
+    [AuthorizeOnly(Role.Admin)]
     [HttpPost("admin")]
     public async Task<IActionResult> CreateAdminUser(UserDto userDto)
     {
-        var requesterUser = await GetRequesterUserAsync();
-
-        if (requesterUser?.Role is not Role.Admin)
-            return Unauthorized();
-
         var userToCreate = new User(userDto.Username, userDto.Password, Role.Admin);
         var user = await _databaseDrivenPort.AddUserAsync(userToCreate);
         return Created("/", user);
     }
 
-    [Authorize]
     [HttpDelete("me")]
     public async Task<IActionResult> DeleteMe()
     {
-        var user = await GetRequesterUserAsync();
+        var requesterUsername =
+            User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
+        var user = await _databaseDrivenPort.GetUserAsync(requesterUsername?.Value ?? "");
 
         if (user is null)
             return NotFound(new NotFoundResponse("User has already been deleted",
@@ -86,15 +81,10 @@ public class UserController : BaseController
         return Ok();
     }
 
-    [Authorize]
+    [AuthorizeOnly(Role.Admin)]
     [HttpDelete]
     public async Task<IActionResult> Delete([FromQuery] string username)
     {
-        var requesterUser = await GetRequesterUserAsync();
-
-        if (requesterUser?.Role is not Role.Admin)
-            return Unauthorized();
-
         var userToDelete = await _databaseDrivenPort.GetUserAsync(username);
 
         if (userToDelete is null)
