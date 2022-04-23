@@ -54,7 +54,7 @@ public class UserController : ControllerBase
     {
         var userToCreate = new User(userDto.Username, userDto.Password);
         var user = await _databaseDrivenPort.AddUserAsync(userToCreate);
-        return Created("/me", user);
+        return Created("v1/user/me", user);
     }
 
     [AuthorizeOnly(Role.Admin)]
@@ -63,7 +63,7 @@ public class UserController : ControllerBase
     {
         var userToCreate = new User(userDto.Username, userDto.Password, Role.Admin);
         var user = await _databaseDrivenPort.AddUserAsync(userToCreate);
-        return Created("/", user);
+        return Created("v1/user/", user);
     }
 
     [HttpDelete("me")]
@@ -82,8 +82,8 @@ public class UserController : ControllerBase
     }
 
     [AuthorizeOnly(Role.Admin)]
-    [HttpDelete]
-    public async Task<IActionResult> Delete([FromQuery] string username)
+    [HttpDelete("{username}")]
+    public async Task<IActionResult> Delete(string username)
     {
         var userToDelete = await _databaseDrivenPort.GetUserAsync(username);
 

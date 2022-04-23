@@ -33,4 +33,16 @@ public class Movie : IdentifiableEntity
     public virtual ICollection<Actor> Cast { get; set; }
 
     public virtual Director Director { get; set; }
+
+    public void Bind(Movie movie)
+    {
+        Title = movie.Title;
+        Synopsis = movie.Synopsis;
+        ReleaseYear = movie.ReleaseYear;
+        AmountAvailable = movie.AmountAvailable;
+        Category = movie.Category;
+        RentCategory = movie.RentCategory;
+        Cast = movie.Cast;
+        Director = movie.Director;
+    }
 }

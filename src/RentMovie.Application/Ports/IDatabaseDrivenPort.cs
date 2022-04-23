@@ -11,5 +11,13 @@ public interface IDatabaseDrivenPort
 
     Task DeleteUserAsync(User user);
 
+    Task<Movie?> GetMovieByIdAsync(Guid id);
+
+    Task<Movie> AddMovieAsync(Movie movie);
+
+    Task UpdateMovieAsync(Movie movie);
+    
+    Task DeleteMovieAsync(Movie movie);
+
     Task<List<Movie>> GetMovieByExpressionAsync(Expression<Func<Movie, bool>> expression);
 }
