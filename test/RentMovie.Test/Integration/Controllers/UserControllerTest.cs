@@ -6,9 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using RentMovie.Application.Domain.Entities;
+using RentMovie.Application.Domain.Enums;
 using RentMovie.Application.Domain.ValueObjects;
 using RentMovie.Application.Dtos;
 using RentMovie.Test.Helpers;
+using RentMovie.Web.Responses;
 using Xunit;
 
 namespace RentMovie.Test.Integration.Controllers;
@@ -42,6 +44,29 @@ public class UserControllerTest : IntegrationTestFixture
         {
             username = requestBody.Username
         });
+    }
+
+    [Fact(DisplayName = "Should return not found on get user when user doesn't exist")]
+    public async Task GetUser_WhenUserDoesNotExist_ShouldReturnNotFound()
+    {
+        // arrange
+        var user = new User("get-user-admin-requester", ValidPassword, Role.Admin);
+        await DbContext.Users.AddAsync(user);
+        await DbContext.SaveChangesAsync();
+        var accessToken = _auth.GenerateAccessToken(user.Username);
+        Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+        var expectedResponse = new NotFoundResponse("User not found", "");
+
+        // act
+        var response = await Client.GetAsync($"{UserPath}?username=non_existent_user");
+        var responseMessage = await response.Content.ReadAsStringAsync();
+        var responseBody = JsonConvert.DeserializeObject<NotFoundResponse>(responseMessage);
+
+        // assert
+        response.Should().Be404NotFound();
+        responseBody.Should().BeEquivalentTo(expectedResponse,
+            options => options.Excluding(source => source.TraceId)
+        );
     }
 
     [Fact(DisplayName = "Should return ok on me when authorized")]

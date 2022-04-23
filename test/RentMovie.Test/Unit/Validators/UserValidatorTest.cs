@@ -22,7 +22,7 @@ public class UserValidatorTest
         _mockedDatabase = mockedDatabaseAdapter.Object;
     }
 
-    [Fact(DisplayName = "Should return true when username has all requirements")]
+    [Fact(DisplayName = "Should return true when user has all requirements")]
     public void Validate_WhenHasAllRequirements_ShouldReturnTrue()
     {
         // arrange

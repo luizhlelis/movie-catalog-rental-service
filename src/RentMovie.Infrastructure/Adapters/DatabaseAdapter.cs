@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using RentMovie.Application.Domain.Entities;
 using RentMovie.Application.Ports;
 
@@ -30,5 +31,10 @@ public class DatabaseAdapter : IDatabaseDrivenPort
     {
         var entry = _dbContext.Users.Remove(user);
         await _dbContext.SaveChangesAsync();
+    }
+
+    public Task<List<Movie>> GetMovieByExpressionAsync(Expression<Func<Movie, bool>> expression)
+    {
+        throw new NotImplementedException();
     }
 }

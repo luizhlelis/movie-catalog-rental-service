@@ -2,15 +2,15 @@
 
 namespace RentMovie.Application.Domain.Entities;
 
-public class Actor
+public class Director
 {
-    public Actor(string name)
+    public Director(string name)
     {
         Name = name;
     }
 
     // Empty constructor required for EF
-    public Actor() { }
+    public Director() { }
 
     [Key] [Required] [MaxLength(30)] public string Name { get; set; }
 

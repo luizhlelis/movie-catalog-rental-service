@@ -2,17 +2,17 @@
 
 namespace RentMovie.Application.Domain.Entities;
 
-public class Actor
+public class MovieCategory
 {
-    public Actor(string name)
+    public MovieCategory(string name)
     {
         Name = name;
     }
 
     // Empty constructor required for EF
-    public Actor() { }
+    public MovieCategory() { }
 
-    [Key] [Required] [MaxLength(30)] public string Name { get; set; }
+    [Key] [Required] [MaxLength(20)] public string Name { get; set; }
 
     public virtual ICollection<Movie> Movies { get; set; }
 }

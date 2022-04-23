@@ -1,20 +1,36 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+using RentMovie.Application.Ports;
 
 namespace RentMovie.Application.Domain.Entities;
 
-public class Movie
+[Index(nameof(Id), nameof(Title), IsUnique = true)]
+public class Movie : IdentifiableEntity
 {
-    [Required] public Guid Id { get; protected set; }
+    public Movie(string title, string synopsis, int releaseYear, int amountAvailable)
+    {
+        Title = title;
+        Synopsis = synopsis;
+        ReleaseYear = releaseYear;
+        AmountAvailable = amountAvailable;
+    }
 
-    [Required] public string Title { get; private set; }
+    // Empty constructor required for EF
+    public Movie() { }
 
-    [Required] public string Synopsis { get; private set; }
+    [Required] [MaxLength(50)] public string Title { get; set; }
 
-    [Required] public DateTime ReleaseYear { get; private set; }
+    [Required] [MaxLength(600)] public string Synopsis { get; set; }
 
-    [Required] public string Category { get; private set; }
+    [Required] public int ReleaseYear { get; set; }
 
-    public virtual RentType RentType { get; private set; }
+    [Required] public int AmountAvailable { get; set; }
+
+    public virtual MovieCategory Category { get; set; }
+
+    public virtual RentCategory RentCategory { get; set; }
 
     public virtual ICollection<Actor> Cast { get; set; }
+
+    public virtual Director Director { get; set; }
 }
