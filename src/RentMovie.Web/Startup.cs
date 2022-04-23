@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RentMovie.Application.Domain;
 using RentMovie.Application.Dtos;
@@ -69,6 +71,7 @@ public class Startup
         services.AddScoped<IValidatorFactory>(serviceProvider =>
             new ServiceProviderValidatorFactory(serviceProvider));
         services.AddScoped<IValidator<OwnerCredentialDto>, OwnerCredentialValidator>();
+        services.AddScoped<IValidator<UserDto>, UserValidator>();
 
         // CORS
         services.AddCors(options =>
@@ -87,6 +90,24 @@ public class Startup
             Configuration["TokenCredentials:HmacSecretKey"],
             Configuration["TokenCredentials:ExpireInDays"]);
         services.AddSingleton(auth);
+
+        services
+            .AddAuthentication(sharedOptions =>
+            {
+                sharedOptions.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                sharedOptions.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                sharedOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidIssuer = auth.Issuer,
+                    ValidAudience = auth.Audience,
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(
+                            Convert.FromBase64String(auth.HmacSecretKey))
+                }
+            );
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -113,6 +134,10 @@ public class Startup
         app.UseHttpsRedirection();
 
         app.UseRouting();
+
+        app.UseAuthentication();
+
+        app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {

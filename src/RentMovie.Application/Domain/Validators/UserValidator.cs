@@ -1,11 +1,12 @@
 ﻿using FluentValidation;
 using RentMovie.Application.Dtos;
+using RentMovie.Application.Ports;
 
 namespace RentMovie.Application.Domain.Validators;
 
 public class UserValidator : AbstractValidator<UserDto>
 {
-    public UserValidator()
+    public UserValidator(IDatabaseDrivenPort databaseDrivenPort)
     {
         RuleFor(user => user.Username)
             .NotEmpty()
@@ -20,5 +21,16 @@ public class UserValidator : AbstractValidator<UserDto>
             .WithMessage("Password must have at least one number")
             .Matches("[!@#$&*]")
             .WithMessage("Password must have at least one special character: !@#$&*");
+
+        RuleFor(user => user.Username)
+            .MustAsync(HasNotYetBeenRegistered)
+            .WithMessage("User has already been registered");
+
+        async Task<bool> HasNotYetBeenRegistered(string username,
+            CancellationToken cancellationToken)
+        {
+            var user = await databaseDrivenPort.GetUserAsync(username);
+            return user is null;
+        }
     }
 }

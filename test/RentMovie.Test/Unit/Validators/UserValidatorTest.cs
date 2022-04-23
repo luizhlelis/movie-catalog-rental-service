@@ -1,7 +1,9 @@
 using System.Linq;
 using FluentAssertions;
+using Moq;
 using RentMovie.Application.Dtos;
 using RentMovie.Application.Domain.Validators;
+using RentMovie.Application.Ports;
 using Xunit;
 
 namespace RentMovie.Test.Unit.Validators;
@@ -10,6 +12,15 @@ public class UserValidatorTest
 {
     private const string ValidPassword = "Abcd@123";
     private const string ValidUsername = "valid-username";
+    private readonly IDatabaseDrivenPort _mockedDatabase;
+
+    public UserValidatorTest()
+    {
+        var mockedDatabaseAdapter = new Mock<IDatabaseDrivenPort>();
+        mockedDatabaseAdapter
+            .Setup(x => x.GetUserAsync(It.IsAny<string>()));
+        _mockedDatabase = mockedDatabaseAdapter.Object;
+    }
 
     [Fact(DisplayName = "Should return true when username has all requirements")]
     public void Validate_WhenHasAllRequirements_ShouldReturnTrue()
@@ -18,7 +29,7 @@ public class UserValidatorTest
         var user = new UserDto {Username = ValidUsername, Password = ValidPassword};
 
         // act
-        var validationResult = new UserValidator().Validate(user);
+        var validationResult = new UserValidator(_mockedDatabase).Validate(user);
 
         // assert
         validationResult.IsValid.Should().BeTrue();
@@ -34,7 +45,7 @@ public class UserValidatorTest
         var user = new UserDto {Username = username, Password = ValidPassword};
 
         // act
-        var validationResult = new UserValidator().Validate(user);
+        var validationResult = new UserValidator(_mockedDatabase).Validate(user);
 
         // assert
         validationResult.IsValid.Should().BeFalse();
@@ -49,7 +60,7 @@ public class UserValidatorTest
         var user = new UserDto {Username = "assasasasasasasasasasasasas", Password = ValidPassword};
 
         // act
-        var validationResult = new UserValidator().Validate(user);
+        var validationResult = new UserValidator(_mockedDatabase).Validate(user);
 
         // assert
         validationResult.IsValid.Should().BeFalse();
@@ -65,7 +76,7 @@ public class UserValidatorTest
         var user = new UserDto {Username = ValidUsername, Password = "abcd@123"};
 
         // act
-        var validationResult = new UserValidator().Validate(user);
+        var validationResult = new UserValidator(_mockedDatabase).Validate(user);
 
         // assert
         validationResult.IsValid.Should().BeFalse();
@@ -80,7 +91,7 @@ public class UserValidatorTest
         var user = new UserDto {Username = ValidUsername, Password = "Abcd@12"};
 
         // act
-        var validationResult = new UserValidator().Validate(user);
+        var validationResult = new UserValidator(_mockedDatabase).Validate(user);
 
         // assert
         validationResult.IsValid.Should().BeFalse();
@@ -95,7 +106,7 @@ public class UserValidatorTest
         var user = new UserDto {Username = ValidUsername, Password = "Abcd@abcd"};
 
         // act
-        var validationResult = new UserValidator().Validate(user);
+        var validationResult = new UserValidator(_mockedDatabase).Validate(user);
 
         // assert
         validationResult.IsValid.Should().BeFalse();
@@ -110,7 +121,7 @@ public class UserValidatorTest
         var user = new UserDto {Username = ValidUsername, Password = "Abcda123"};
 
         // act
-        var validationResult = new UserValidator().Validate(user);
+        var validationResult = new UserValidator(_mockedDatabase).Validate(user);
 
         // assert
         validationResult.IsValid.Should().BeFalse();

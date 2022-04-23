@@ -17,22 +17,17 @@ namespace RentMovie.Test.Integration.Controllers;
 public class AuthenticationControllerTest : IntegrationTestFixture
 {
     private const string PostTokenPath = "v1/authentication/token";
-    private readonly Password _validPassword;
-
-    public AuthenticationControllerTest()
-    {
-        _validPassword = new Password("StrongPassword@123");
-    }
+    private const string ValidPassword = "StrongPassword@123";
 
     [Fact(DisplayName = "Should return ok with token when valid owner credential")]
     public async Task PostToken_WhenValidOwnerCredential_ShouldReturnOkWithToken()
     {
-        var user = new User("valid-username-1", _validPassword);
+        var user = new User("valid-username-1", ValidPassword);
         await DbContext.Users.AddAsync(user);
         await DbContext.SaveChangesAsync();
 
         // arrange
-        var requestBody = new {user.Username, Password = _validPassword.PlainText};
+        var requestBody = new {user.Username, Password = ValidPassword};
         var content = new StringContent(
             JsonConvert.SerializeObject(requestBody),
             Encoding.UTF8,
@@ -109,7 +104,7 @@ public class AuthenticationControllerTest : IntegrationTestFixture
     [Fact(DisplayName = "Should return forbidden when password mismatch")]
     public async Task PostToken_WhenPasswordMismatch_ShouldReturnForbidden()
     {
-        var user = new User("valid-username-4", _validPassword);
+        var user = new User("valid-username-4", ValidPassword);
         await DbContext.Users.AddAsync(user);
         await DbContext.SaveChangesAsync();
 
