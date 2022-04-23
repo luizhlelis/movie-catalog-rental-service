@@ -27,14 +27,40 @@ public class DatabaseAdapter : IDatabaseDrivenPort
         return await _dbContext.Users.FirstOrDefaultAsync(user => user.Username == username);
     }
 
-    public async Task DeleteUserAsync(User user)
+    public async Task<User> DeleteUserAsync(User user)
     {
         var entry = _dbContext.Users.Remove(user);
         await _dbContext.SaveChangesAsync();
+        return entry.Entity;
     }
 
-    public Task<List<Movie>> GetMovieByExpressionAsync(Expression<Func<Movie, bool>> expression)
+    public async Task<Movie?> GetMovieByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await _dbContext.Movies.FirstOrDefaultAsync(movie => movie.Id == id);
+    }
+
+    public async Task<Movie> AddMovieAsync(Movie movie)
+    {
+        var entry = await _dbContext.Movies.AddAsync(movie);
+        await _dbContext.SaveChangesAsync();
+        return entry.Entity;
+    }
+
+    public async Task UpdateMovieAsync()
+    {
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<Movie> DeleteMovieAsync(Movie movie)
+    {
+        var entry = _dbContext.Movies.Remove(movie);
+        await _dbContext.SaveChangesAsync();
+        return entry.Entity;
+    }
+
+    public async Task<List<Movie>> GetMovieByExpressionAsync(
+        Expression<Func<Movie, bool>> expression)
+    {
+        return await _dbContext.Movies.Where(expression).ToListAsync();
     }
 }

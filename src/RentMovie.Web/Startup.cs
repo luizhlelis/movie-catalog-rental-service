@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -7,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using RentMovie.Application.Domain;
+using RentMovie.Application.Domain.Entities;
 using RentMovie.Application.Dtos;
 using RentMovie.Application.Domain.Validators;
 using RentMovie.Application.Domain.ValueObjects;
@@ -72,6 +71,12 @@ public class Startup
             new ServiceProviderValidatorFactory(serviceProvider));
         services.AddScoped<IValidator<OwnerCredentialDto>, OwnerCredentialValidator>();
         services.AddScoped<IValidator<UserDto>, UserValidator>();
+        services.AddScoped<IValidator<Actor>, ActorValidator>();
+        services.AddScoped<IValidator<List<Actor>>, CastValidator>();
+        services.AddScoped<IValidator<Director>, DirectorValidator>();
+        services.AddScoped<IValidator<MovieCategory>, MovieCategoryValidator>();
+        services.AddScoped<IValidator<Movie>, MovieValidator>();
+        services.AddScoped<IValidator<RentCategory>, RentCategoryValidator>();
 
         // CORS
         services.AddCors(options =>

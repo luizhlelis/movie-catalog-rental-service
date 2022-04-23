@@ -53,7 +53,7 @@ public class MovieController : ControllerBase
 
         movie.Bind(inputMovie);
 
-        await _databaseDrivenPort.UpdateMovieAsync(movie);
+        await _databaseDrivenPort.UpdateMovieAsync();
 
         return NoContent();
     }
@@ -67,8 +67,8 @@ public class MovieController : ControllerBase
             return NotFound(new NotFoundResponse("Movie has already been deleted",
                 Activity.Current?.Id ?? HttpContext.TraceIdentifier));
 
-        await _databaseDrivenPort.DeleteMovieAsync(movie);
+        var response = await _databaseDrivenPort.DeleteMovieAsync(movie);
 
-        return Ok();
+        return Ok(response);
     }
 }

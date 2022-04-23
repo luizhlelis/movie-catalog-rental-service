@@ -77,8 +77,8 @@ public class UserController : ControllerBase
             return NotFound(new NotFoundResponse("User has already been deleted",
                 Activity.Current?.Id ?? HttpContext.TraceIdentifier));
 
-        await _databaseDrivenPort.DeleteUserAsync(user);
-        return Ok();
+        var response = await _databaseDrivenPort.DeleteUserAsync(user);
+        return Ok(response);
     }
 
     [AuthorizeOnly(Role.Admin)]
@@ -91,7 +91,7 @@ public class UserController : ControllerBase
             return NotFound(new NotFoundResponse("User has already been deleted",
                 Activity.Current?.Id ?? HttpContext.TraceIdentifier));
 
-        await _databaseDrivenPort.DeleteUserAsync(userToDelete);
-        return Ok();
+        var response = await _databaseDrivenPort.DeleteUserAsync(userToDelete);
+        return Ok(response);
     }
 }
