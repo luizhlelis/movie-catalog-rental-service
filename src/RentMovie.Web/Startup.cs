@@ -11,6 +11,7 @@ using RentMovie.Application.Dtos;
 using RentMovie.Application.Domain.Validators;
 using RentMovie.Application.Domain.ValueObjects;
 using RentMovie.Application.Ports;
+using RentMovie.Infrastructure;
 using RentMovie.Infrastructure.Adapters;
 using RentMovie.Web.Filters;
 using RentMovie.Web.Swagger;

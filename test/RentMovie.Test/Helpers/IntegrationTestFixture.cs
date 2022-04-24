@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using RentMovie.Infrastructure.Adapters;
+using RentMovie.Infrastructure;
 using RentMovie.Web;
 
 namespace RentMovie.Test.Helpers;

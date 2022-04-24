@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RentMovie.Application.Domain.Entities;
 
-namespace RentMovie.Infrastructure.Adapters;
+namespace RentMovie.Infrastructure;
 
 public class RentMovieContext : DbContext
 {
