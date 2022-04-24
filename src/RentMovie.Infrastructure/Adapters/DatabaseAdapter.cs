@@ -1,7 +1,5 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.DependencyInjection;
 using RentMovie.Application.Domain.Entities;
 using RentMovie.Application.Ports;
 
@@ -39,6 +37,15 @@ public class DatabaseAdapter : IDatabaseDrivenPort
     public async Task<Movie?> GetMovieByIdAsync(Guid id)
     {
         return await _dbContext.Movies.FirstOrDefaultAsync(movie => movie.Id == id);
+    }
+
+    public async Task<List<Movie>> GetMoviesAsync(int page, int pageSize)
+    {
+        return await _dbContext.Movies
+            .OrderByDescending(post => post.ReleaseYear)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
     }
 
     /// <summary>

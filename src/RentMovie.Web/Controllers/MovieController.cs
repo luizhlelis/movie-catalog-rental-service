@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentMovie.Application.Domain.Entities;
 using RentMovie.Application.Domain.Enums;
+using RentMovie.Application.Dtos;
 using RentMovie.Application.Ports;
 using RentMovie.Web.Filters;
 using RentMovie.Web.Responses;
@@ -11,7 +12,6 @@ namespace RentMovie.Web.Controllers;
 
 [ApiController]
 [Authorize]
-[AuthorizeOnly(Role.Admin)]
 [ApiVersion("1.0")]
 [Route("v{version:apiVersion}/[controller]")]
 public class MovieController : ControllerBase
@@ -24,6 +24,7 @@ public class MovieController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> Get([FromQuery] Guid movieId)
     {
         var movie = await _databaseDrivenPort.GetMovieByIdAsync(movieId);
@@ -34,7 +35,17 @@ public class MovieController : ControllerBase
             : Ok(movie);
     }
 
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetMovies([FromQuery] MoviesDto moviesDto)
+    {
+        var movies = await _databaseDrivenPort.GetMoviesAsync(moviesDto.Page, moviesDto.PageSize);
+
+        return Ok(movies);
+    }
+
     [HttpPost]
+    [AuthorizeOnly(Role.Admin)]
     public async Task<IActionResult> Post([FromBody] Movie movie)
     {
         var response = await _databaseDrivenPort.AddMovieAsync(movie);
@@ -43,6 +54,7 @@ public class MovieController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [AuthorizeOnly(Role.Admin)]
     public async Task<IActionResult> Put(Guid id, [FromBody] Movie inputMovie)
     {
         var movie = await _databaseDrivenPort.GetMovieByIdAsync(id);
@@ -59,6 +71,7 @@ public class MovieController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [AuthorizeOnly(Role.Admin)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var movie = await _databaseDrivenPort.GetMovieByIdAsync(id);
