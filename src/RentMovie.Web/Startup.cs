@@ -85,6 +85,7 @@ public class Startup
         services.AddScoped<IValidator<RentCategory>, RentCategoryValidator>();
         services.AddScoped<IValidator<MoviesDto>, MoviesDtoValidator>();
         services.AddScoped<IValidator<CartDto>, CartDtoValidator>();
+        services.AddScoped<IValidator<OrderDto>, OrderValidator>();
 
         // Handlers
         services.AddScoped<ICartDrivingPort, AddItemToCartCommandHandler>();
@@ -124,6 +125,7 @@ public class Startup
                             Convert.FromBase64String(auth.HmacSecretKey))
                 }
             );
+        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

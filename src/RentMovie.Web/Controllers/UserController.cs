@@ -52,7 +52,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateUser(UserDto userDto)
     {
-        var userToCreate = new User(userDto.Username, userDto.Password);
+        var userToCreate = new User(userDto.Username, userDto.Password, userDto.ZipCode);
         var user = await _databaseDrivenPort.AddUserAsync(userToCreate);
         return Created("v1/user/me", user);
     }
@@ -61,7 +61,8 @@ public class UserController : ControllerBase
     [HttpPost("admin")]
     public async Task<IActionResult> CreateAdminUser(UserDto userDto)
     {
-        var userToCreate = new User(userDto.Username, userDto.Password, Role.Admin);
+        var userToCreate =
+            new User(userDto.Username, userDto.Password, userDto.ZipCode, Role.Admin);
         var user = await _databaseDrivenPort.AddUserAsync(userToCreate);
         return Created("v1/user/{username}", user);
     }

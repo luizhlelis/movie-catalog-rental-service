@@ -9,6 +9,7 @@ public class CartDtoValidator : AbstractValidator<CartDto>
     public CartDtoValidator(IDatabaseDrivenPort databaseDrivenPort)
     {
         RuleFor(cart => cart.MovieId)
+            .NotEmpty()
             .MustAsync(MovieAlreadyRegisteredAndAvailable)
             .WithMessage("Movie not found or not available to rent")
             .WithErrorCode(ErrorCode.NotFound);

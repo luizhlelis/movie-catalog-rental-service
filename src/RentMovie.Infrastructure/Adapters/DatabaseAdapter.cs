@@ -152,4 +152,14 @@ public class DatabaseAdapter : IDatabaseDrivenPort
     {
         return await _dbContext.Movies.Where(expression).ToListAsync();
     }
+
+    public Task<Order> AddOrderAsync(Order order)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Order?> GetOrderByIdAsync(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 }

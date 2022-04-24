@@ -12,6 +12,10 @@ public class UserValidator : AbstractValidator<UserDto>
             .NotEmpty()
             .MaximumLength(20);
 
+        RuleFor(user => user.ZipCode)
+            .NotEmpty()
+            .Matches("^\\d{5}$)|(^\\d{9}$)|(^\\d{5}-\\d{4}$");
+
         RuleFor(user => user.Password)
             .MinimumLength(8)
             .WithMessage("The length of Password must be at least 8 characters")
