@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using RentMovie.Application.Domain.Entities;
+using RentMovie.Application.Domain.Enums;
 using RentMovie.Application.Ports;
 
 namespace RentMovie.Infrastructure.Adapters;
@@ -153,14 +154,25 @@ public class DatabaseAdapter : IDatabaseDrivenPort
         return await _dbContext.Movies.Where(expression).ToListAsync();
     }
 
-    public Task<Order> AddOrderAsync(Order order)
+    public async Task<List<Movie>> GetMovieRangeByIdAsync(Guid[] movieIds)
     {
-        throw new NotImplementedException();
+        return await _dbContext.Movies.Where(movie => movieIds.Contains(movie.Id)).ToListAsync();
     }
 
-    public Task<Order?> GetOrderByIdAsync(Guid id)
+    public async Task<Order> AddOrderAsync(Order order)
     {
-        throw new NotImplementedException();
+        var entry = await _dbContext.Orders.AddAsync(order);
+        await _dbContext.SaveChangesAsync();
+        return entry.Entity;
+    }
+
+    public async Task<Order?> GetOrderByIdAsync(Guid id)
+    {
+        return await _dbContext.Orders
+            .Where(order => order.Id == id)
+            .Include(order => order.Customer)
+            .FirstOrDefaultAsync();
+    }
 
     public async Task<Order> DeleteOrderAsync(Guid id)
     {
@@ -170,5 +182,8 @@ public class DatabaseAdapter : IDatabaseDrivenPort
         return order;
     }
 
+    public async Task UpdateEntriesAsync()
+    {
+        await _dbContext.SaveChangesAsync();
     }
 }

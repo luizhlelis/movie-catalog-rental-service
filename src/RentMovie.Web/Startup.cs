@@ -66,7 +66,10 @@ public class Startup
         services.AddDbContext<RentMovieContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("RentMovieContext")));
 
+        // Adapters
         services.AddScoped<IDatabaseDrivenPort, DatabaseAdapter>();
+        services.AddScoped<IPaymentDrivenPort, PaymentAdapter>();
+
 
         /*  InMemory Cache: memory consumption isn't an issue yet and the app is running in a
             single instance */
@@ -88,7 +91,8 @@ public class Startup
         services.AddScoped<IValidator<OrderDto>, OrderValidator>();
 
         // Handlers
-        services.AddScoped<ICartDrivingPort, AddItemToCartCommandHandler>();
+        services.AddScoped<ICartDrivingPort, CartCommandHandler>();
+        services.AddScoped<IOrderDrivingPort, OrderCommandHandler>();
 
         // CORS
         services.AddCors(options =>

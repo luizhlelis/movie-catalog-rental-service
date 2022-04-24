@@ -5,12 +5,12 @@ using RentMovie.Application.Ports;
 
 namespace RentMovie.Application.Domain.Handlers;
 
-public class AddItemToCartCommandHandler : ICartDrivingPort
+public class CartCommandHandler : ICartDrivingPort
 {
     private readonly IDatabaseDrivenPort _databaseDrivenPort;
     private readonly IDistributedCache _cache;
 
-    public AddItemToCartCommandHandler(IDatabaseDrivenPort databaseDrivenPort,
+    public CartCommandHandler(IDatabaseDrivenPort databaseDrivenPort,
         IDistributedCache cache)
     {
         _databaseDrivenPort = databaseDrivenPort;

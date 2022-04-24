@@ -25,9 +25,13 @@ public interface IDatabaseDrivenPort
 
     Task<List<Movie>> GetMovieByExpressionAsync(Expression<Func<Movie, bool>> expression);
 
+    Task<List<Movie>> GetMovieRangeByIdAsync(Guid[] movieIds);
+
     Task<Order> AddOrderAsync(Order order);
 
     Task<Order?> GetOrderByIdAsync(Guid id); // GetOrderIncludingCustomer
 
     Task<Order> DeleteOrderAsync(Guid id);
+
+    Task UpdateEntriesAsync();
 }

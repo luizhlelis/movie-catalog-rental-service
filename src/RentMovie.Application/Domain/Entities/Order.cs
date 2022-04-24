@@ -16,6 +16,9 @@ public class Order : IdentifiableEntity
         Customer = customer;
     }
 
+    // Empty constructor required for EF
+    public Order() { }
+
     public double TotalPrice { get; private set; }
 
     public double ShippingPrice { get; private set; }
@@ -38,5 +41,15 @@ public class Order : IdentifiableEntity
     public void LoadTotalPrice()
     {
         TotalPrice = ItemsTotalPrice + ShippingPrice;
+    }
+
+    public void FinalizeIt()
+    {
+        Status = OrderStatus.Finished;
+    }
+
+    public void DeleteIt()
+    {
+        Status = OrderStatus.Deleted;
     }
 }

@@ -58,4 +58,9 @@ public class Movie : IdentifiableEntity
         Director = null;
         Cast = null;
     }
+
+    public void DecreaseAmountAvailable()
+    {
+        AmountAvailable--;
+    }
 }

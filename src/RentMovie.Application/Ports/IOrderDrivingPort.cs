@@ -7,5 +7,5 @@ public interface IOrderDrivingPort
 {
     public Task<Order> Handle(CreateOrderCommand command);
 
-    public Task Handle(FinishOrderCommand command);
+    public Task<Order?> Handle(FinishOrderCommand command);
 }

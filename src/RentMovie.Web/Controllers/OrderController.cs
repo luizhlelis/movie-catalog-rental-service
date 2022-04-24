@@ -20,11 +20,14 @@ public class OrderController : ControllerBase
 {
     private readonly IDistributedCache _cache;
     private readonly IOrderDrivingPort _orderHandler;
+    private readonly IDatabaseDrivenPort _databaseDrivenPort;
 
-    public OrderController(IDistributedCache cache, IOrderDrivingPort orderHandler)
+    public OrderController(IDistributedCache cache, IOrderDrivingPort orderHandler,
+        IDatabaseDrivenPort databaseDrivenPort)
     {
         _cache = cache;
         _orderHandler = orderHandler;
+        _databaseDrivenPort = databaseDrivenPort;
     }
 
     // GET
@@ -58,9 +61,28 @@ public class OrderController : ControllerBase
     }
 
     [HttpPut("finish")]
-    public IActionResult PutFinishOrder([FromBody] OrderDto finishOrderDto)
+    public async Task<IActionResult> PutFinishOrder([FromBody] OrderDto finishOrderDto)
     {
-        return NoContent();
+        var username =
+            User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
+        var cartContent = await _cache.GetAsync(username?.Value ?? "");
+
+        if (cartContent is null)
+            return NotFound(new NotFoundResponse(
+                "Cart not found or expired, you must create it first",
+                Activity.Current?.Id ?? HttpContext.TraceIdentifier));
+
+        var result = await _orderHandler.Handle(new FinishOrderCommand
+        {
+            OrderId = finishOrderDto.OrderId,
+            Username = username?.Value ?? "",
+            CustomerCartBytes = cartContent
+        });
+
+        return result is null
+            ? BadRequest(
+                "Some of the items in your cart are not available anymore, please delete your cart and start again")
+            : NoContent();
     }
 
     [HttpDelete]
