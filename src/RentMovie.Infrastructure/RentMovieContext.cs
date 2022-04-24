@@ -21,6 +21,8 @@ public class RentMovieContext : DbContext
 
     public DbSet<MovieCategory> MovieCategories { get; set; }
 
+    public DbSet<Order> Orders { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

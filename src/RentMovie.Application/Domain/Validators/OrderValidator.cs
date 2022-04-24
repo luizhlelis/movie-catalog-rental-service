@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using RentMovie.Application.Domain.Enums;
 using RentMovie.Application.Dtos;
 using RentMovie.Application.Ports;
 
@@ -31,7 +32,8 @@ public class OrderValidator : AbstractValidator<OrderDto>
         {
             var order = await databaseDrivenPort.GetOrderByIdAsync(orderId);
 
-            return order is not null && username == order.Customer.Username;
+            return order is not null && username == order.Customer.Username &&
+                   order.Status is OrderStatus.Created;
         }
     }
 }

@@ -64,9 +64,8 @@ public class OrderController : ControllerBase
     }
 
     [HttpDelete]
-    public IActionResult DeleteOrder()
+    public async Task<IActionResult> DeleteOrder([FromQuery] OrderDto deleteOrderDto)
     {
-        // check if not null and if order is from the requester username and order status
-        return Ok();
+        return Ok(await _databaseDrivenPort.DeleteOrderAsync(deleteOrderDto.OrderId));
     }
 }

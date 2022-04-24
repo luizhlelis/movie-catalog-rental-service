@@ -28,4 +28,6 @@ public interface IDatabaseDrivenPort
     Task<Order> AddOrderAsync(Order order);
 
     Task<Order?> GetOrderByIdAsync(Guid id); // GetOrderIncludingCustomer
+
+    Task<Order> DeleteOrderAsync(Guid id);
 }

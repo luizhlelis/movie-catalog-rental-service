@@ -161,5 +161,14 @@ public class DatabaseAdapter : IDatabaseDrivenPort
     public Task<Order?> GetOrderByIdAsync(Guid id)
     {
         throw new NotImplementedException();
+
+    public async Task<Order> DeleteOrderAsync(Guid id)
+    {
+        var order = await _dbContext.Orders.Where(order => order.Id == id).FirstAsync();
+        order.DeleteIt();
+        await _dbContext.SaveChangesAsync();
+        return order;
+    }
+
     }
 }
