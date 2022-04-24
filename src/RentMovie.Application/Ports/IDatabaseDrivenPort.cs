@@ -13,6 +13,8 @@ public interface IDatabaseDrivenPort
 
     Task<Movie?> GetMovieByIdAsync(Guid id);
 
+    Task<Movie?> GetMovieByIdIncludingAsync(Guid id);
+
     Task<Movie?> GetMovieByIdIncludingRentCategoryAsync(Guid id);
 
     Task<List<Movie>> GetMoviesAsync(int page, int pageSize);

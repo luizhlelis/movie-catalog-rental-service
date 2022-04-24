@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using RentMovie.Application.Commands;
@@ -7,7 +6,6 @@ using RentMovie.Application.Domain.Enums;
 using RentMovie.Application.Dtos;
 using RentMovie.Application.Ports;
 using RentMovie.Web.Filters;
-using RentMovie.Web.Responses;
 
 namespace RentMovie.Web.Controllers;
 
@@ -16,7 +14,7 @@ namespace RentMovie.Web.Controllers;
 [AuthorizeOnly(Role.Customer)]
 [ApiVersion("1.0")]
 [Route("v{version:apiVersion}/[controller]")]
-public class OrderController : ControllerBase
+public class OrderController : BaseController
 {
     private readonly IDistributedCache _cache;
     private readonly IOrderDrivingPort _orderHandler;
@@ -31,52 +29,33 @@ public class OrderController : ControllerBase
     }
 
     // GET
-    [HttpGet("{id}")]
-    public IActionResult Index()
+    [HttpGet]
+    public async Task<IActionResult> Index([FromQuery] OrderDto getOrderDto)
     {
-        // check if not null and if order is from the requester username
-        return Ok();
+        return Ok(await _databaseDrivenPort.GetOrderByIdAsync(getOrderDto.OrderId));
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostCreateOrder([FromBody] PaymentMethod paymentMethod)
+    public async Task<IActionResult> PostCreateOrder([FromBody] CreateOrderDto orderDto)
     {
-        var username =
-            User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
-        var cartContent = await _cache.GetAsync(username?.Value ?? "");
-
-        if (cartContent is null)
-            return NotFound(new NotFoundResponse(
-                "Cart not found or expired, you must create it first",
-                Activity.Current?.Id ?? HttpContext.TraceIdentifier));
+        var username = GetUsernameFromToken();
 
         var response = await _orderHandler.Handle(new CreateOrderCommand
         {
-            CustomerCartBytes = cartContent,
-            PaymentMethod = paymentMethod,
-            Username = username?.Value ?? ""
+            PaymentMethod = orderDto.PaymentMethod, Username = username
         });
 
-        return Created("v1/order/{id}", response);
+        return Created($"v1/order/{response.Id}", response);
     }
 
     [HttpPut("finish")]
     public async Task<IActionResult> PutFinishOrder([FromBody] OrderDto finishOrderDto)
     {
-        var username =
-            User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
-        var cartContent = await _cache.GetAsync(username?.Value ?? "");
-
-        if (cartContent is null)
-            return NotFound(new NotFoundResponse(
-                "Cart not found or expired, you must create it first",
-                Activity.Current?.Id ?? HttpContext.TraceIdentifier));
+        var username = GetUsernameFromToken();
 
         var result = await _orderHandler.Handle(new FinishOrderCommand
         {
-            OrderId = finishOrderDto.OrderId,
-            Username = username?.Value ?? "",
-            CustomerCartBytes = cartContent
+            OrderId = finishOrderDto.OrderId, Username = username
         });
 
         return result is null

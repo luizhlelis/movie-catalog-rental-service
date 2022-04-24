@@ -14,7 +14,7 @@ namespace RentMovie.Web.Controllers;
 [ApiVersion("1.0")]
 [Authorize]
 [Route("v{version:apiVersion}/[controller]")]
-public class UserController : ControllerBase
+public class UserController : BaseController
 {
     private readonly IDatabaseDrivenPort _databaseDrivenPort;
 
@@ -38,9 +38,8 @@ public class UserController : ControllerBase
     [HttpGet("me")]
     public async Task<IActionResult> GetMe()
     {
-        var requesterUsername =
-            User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
-        var user = await _databaseDrivenPort.GetUserAsync(requesterUsername?.Value ?? "");
+        var requesterUsername = GetUsernameFromToken();
+        var user = await _databaseDrivenPort.GetUserAsync(requesterUsername);
 
         return user is null
             ? NotFound(new NotFoundResponse("User not found",
@@ -70,9 +69,8 @@ public class UserController : ControllerBase
     [HttpDelete("me")]
     public async Task<IActionResult> DeleteMe()
     {
-        var requesterUsername =
-            User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
-        var user = await _databaseDrivenPort.GetUserAsync(requesterUsername?.Value ?? "");
+        var requesterUsername = GetUsernameFromToken();
+        var user = await _databaseDrivenPort.GetUserAsync(requesterUsername);
 
         if (user is null)
             return NotFound(new NotFoundResponse("User has already been deleted",

@@ -7,7 +7,5 @@ public class CreateOrderCommand
 {
     public string Username { get; set; }
 
-    public byte[] CustomerCartBytes { get; set; }
-
     public PaymentMethod PaymentMethod { get; set; }
 }

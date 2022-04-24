@@ -26,7 +26,7 @@ public class MovieController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(Guid id)
     {
-        var movie = await _databaseDrivenPort.GetMovieByIdAsync(id);
+        var movie = await _databaseDrivenPort.GetMovieByIdIncludingAsync(id);
 
         return movie is null
             ? NotFound(new NotFoundResponse("Movie not found",

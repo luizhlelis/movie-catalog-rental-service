@@ -8,6 +8,4 @@ public class FinishOrderCommand
     public Guid OrderId { get; set; }
 
     public string Username { get; set; }
-
-    public byte[] CustomerCartBytes { get; set; }
 }
