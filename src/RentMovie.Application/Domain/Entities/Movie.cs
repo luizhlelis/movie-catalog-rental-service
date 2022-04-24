@@ -26,13 +26,13 @@ public class Movie : IdentifiableEntity
 
     [Required] public int AmountAvailable { get; set; }
 
-    public virtual MovieCategory Category { get; set; }
+    public virtual MovieCategory? Category { get; set; }
 
-    public virtual RentCategory RentCategory { get; set; }
+    public virtual RentCategory? RentCategory { get; set; }
 
-    public virtual ICollection<Actor> Cast { get; set; }
+    public virtual ICollection<Actor>? Cast { get; set; }
 
-    public virtual Director Director { get; set; }
+    public virtual Director? Director { get; set; }
 
     public void Bind(Movie movie)
     {
@@ -44,5 +44,18 @@ public class Movie : IdentifiableEntity
         RentCategory = movie.RentCategory;
         Cast = movie.Cast;
         Director = movie.Director;
+    }
+
+    public Movie ShallowCopy()
+    {
+        return (Movie)MemberwiseClone();
+    }
+
+    public void RemoveNestedProperties()
+    {
+        Category = null;
+        RentCategory = null;
+        Director = null;
+        Cast = null;
     }
 }
