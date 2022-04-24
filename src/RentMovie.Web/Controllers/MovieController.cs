@@ -23,8 +23,8 @@ public class MovieController : ControllerBase
         _databaseDrivenPort = databaseDrivenPort;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] Guid movieId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(Guid movieId)
     {
         var movie = await _databaseDrivenPort.GetMovieByIdAsync(movieId);
 

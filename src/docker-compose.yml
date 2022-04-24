@@ -4,7 +4,7 @@ services:
   rent-movie-api:
     container_name: rent-movie-api
     environment:
-      ConnectionStrings__ChatContext: "Data Source=sql-server-database; Initial Catalog=RentMovieDb; User Id=sa; Password=1StrongPassword*"
+      ConnectionStrings_RentMovieContext: "Data Source=sql-server-database; Initial Catalog=RentMovieDb; User Id=sa; Password=1StrongPassword*"
     working_dir: /app
     build:
       context: .

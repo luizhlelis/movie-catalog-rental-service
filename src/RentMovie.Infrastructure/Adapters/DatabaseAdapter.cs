@@ -39,6 +39,14 @@ public class DatabaseAdapter : IDatabaseDrivenPort
         return await _dbContext.Movies.FirstOrDefaultAsync(movie => movie.Id == id);
     }
 
+    public async Task<Movie?> GetMovieByIdIncludingRentCategoryAsync(Guid id)
+    {
+        return await _dbContext.Movies
+            .Where(movie => movie.Id == id)
+            .Include(movie => movie.RentCategory)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<List<Movie>> GetMoviesAsync(int page, int pageSize)
     {
         return await _dbContext.Movies

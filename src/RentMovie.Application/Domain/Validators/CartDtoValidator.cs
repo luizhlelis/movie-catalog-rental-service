@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using RentMovie.Application.Domain.Entities;
 using RentMovie.Application.Dtos;
 using RentMovie.Application.Ports;
 

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RentMovie.Application.Domain.Entities;
+using RentMovie.Application.Domain.Handlers;
 using RentMovie.Application.Dtos;
 using RentMovie.Application.Domain.Validators;
 using RentMovie.Application.Domain.ValueObjects;
@@ -67,8 +68,8 @@ public class Startup
 
         services.AddScoped<IDatabaseDrivenPort, DatabaseAdapter>();
 
-        /* InMemory Cache: using this approach because memory consumption isn't an issue yet and
-           tha app is running in a single instance */
+        /*  InMemory Cache: memory consumption isn't an issue yet and the app is running in a
+            single instance */
         services.AddDistributedMemoryCache();
 
         // API Validators
@@ -84,6 +85,9 @@ public class Startup
         services.AddScoped<IValidator<RentCategory>, RentCategoryValidator>();
         services.AddScoped<IValidator<MoviesDto>, MoviesDtoValidator>();
         services.AddScoped<IValidator<CartDto>, CartDtoValidator>();
+
+        // Handlers
+        services.AddScoped<ICartDrivingPort, AddItemToCartCommandHandler>();
 
         // CORS
         services.AddCors(options =>
