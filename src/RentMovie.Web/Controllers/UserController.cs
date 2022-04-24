@@ -24,8 +24,8 @@ public class UserController : ControllerBase
     }
 
     [AuthorizeOnly(Role.Admin)]
-    [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] string username)
+    [HttpGet("{username}")]
+    public async Task<IActionResult> Get(string username)
     {
         var user = await _databaseDrivenPort.GetUserAsync(username);
 
@@ -63,7 +63,7 @@ public class UserController : ControllerBase
     {
         var userToCreate = new User(userDto.Username, userDto.Password, Role.Admin);
         var user = await _databaseDrivenPort.AddUserAsync(userToCreate);
-        return Created("v1/user/", user);
+        return Created("v1/user/{username}", user);
     }
 
     [HttpDelete("me")]

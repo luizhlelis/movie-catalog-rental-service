@@ -24,9 +24,9 @@ public class MovieController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid movieId)
+    public async Task<IActionResult> Get(Guid id)
     {
-        var movie = await _databaseDrivenPort.GetMovieByIdAsync(movieId);
+        var movie = await _databaseDrivenPort.GetMovieByIdAsync(id);
 
         return movie is null
             ? NotFound(new NotFoundResponse("Movie not found",
@@ -48,7 +48,7 @@ public class MovieController : ControllerBase
     {
         var response = await _databaseDrivenPort.AddMovieAsync(movie);
 
-        return Created("v1/movie/", response);
+        return Created("v1/movie/{id}", response);
     }
 
     [HttpPut("{id}")]

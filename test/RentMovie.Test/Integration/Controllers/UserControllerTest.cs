@@ -57,7 +57,7 @@ public class UserControllerTest : IntegrationTestFixture
         Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
 
         // act
-        var response = await Client.GetAsync($"{UserPath}?username=non_existent_user");
+        var response = await Client.GetAsync($"{UserPath}/fake-username");
 
         // assert
         response.Should().Be404NotFound().And.BeAs(new
