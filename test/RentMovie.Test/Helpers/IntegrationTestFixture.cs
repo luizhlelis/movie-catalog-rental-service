@@ -43,11 +43,31 @@ public class IntegrationTestFixture : IDisposable
 
         TestServiceScope = server.Host.Services.CreateScope();
         DbContext = TestServiceScope.ServiceProvider.GetRequiredService<RentMovieContext>();
+
         Client = server.CreateClient();
+
+        if (DbContext.Directors.Any() || !DbContext.Actors.Any())
+            return;
+
+        DbContext.Directors.AddRange(Fakers.GetValidDirectors());
+        DbContext.Actors.AddRange(Fakers.GetValidCast()
+            .Where(actor => actor.Name != "Leonardo Dicaprio").ToList());
+        DbContext.SaveChanges();
     }
 
     public void Dispose()
     {
         Client.DefaultRequestHeaders.Remove("Authorization");
+        // DbContext.Directors.Clear();
+        // DbContext.Actors.Clear();
+        DbContext.SaveChanges();
+    }
+}
+
+public static class EntityExtensions
+{
+    public static void Clear<T>(this DbSet<T> dbSet) where T : class
+    {
+        dbSet.RemoveRange(dbSet);
     }
 }

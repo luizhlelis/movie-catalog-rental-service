@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace RentMovie.Application.Domain.Entities;
 
@@ -17,5 +19,5 @@ public class RentCategory
 
     [Required] public double Price { get; set; }
 
-    public virtual ICollection<Movie> Movies { get; set; }
+    [JsonIgnore] [IgnoreDataMember] public virtual ICollection<Movie>? Movies { get; set; }
 }

@@ -72,7 +72,7 @@ public class Startup
         services.AddScoped<IValidator<OwnerCredentialDto>, OwnerCredentialValidator>();
         services.AddScoped<IValidator<UserDto>, UserValidator>();
         services.AddScoped<IValidator<Actor>, ActorValidator>();
-        services.AddScoped<IValidator<List<Actor>>, CastValidator>();
+        services.AddScoped<IValidator<ICollection<Actor>>, CastValidator>();
         services.AddScoped<IValidator<Director>, DirectorValidator>();
         services.AddScoped<IValidator<MovieCategory>, MovieCategoryValidator>();
         services.AddScoped<IValidator<Movie>, MovieValidator>();

@@ -87,17 +87,23 @@ public class AuthenticationControllerTest : IntegrationTestFixture
             JsonConvert.SerializeObject(requestBody),
             Encoding.UTF8,
             "application/json");
-        var expectedResponse = new ForbiddenResponse("User or password mismatch", string.Empty);
 
         // act
         var response = await Client.PostAsync(PostTokenPath, content);
-        var responseMessage = await response.Content.ReadAsStringAsync();
-        var responseBody = JsonConvert.DeserializeObject<ForbiddenResponse>(responseMessage);
 
         // assert
-        response.Should().Be403Forbidden();
-        responseBody.Should().BeEquivalentTo(expectedResponse,
-            options => options.Excluding(source => source.TraceId)
+        response.Should().Be403Forbidden().And.BeAs(new
+            {
+                type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3",
+                title = "FORBIDDEN_ERROR",
+                status = 403,
+                traceId = "0HMH5DLVSLJDP",
+                error = new
+                {
+                    msg = "User or password mismatch"
+                }
+            },
+            options => options.Excluding(source => source.traceId)
         );
     }
 
@@ -114,17 +120,22 @@ public class AuthenticationControllerTest : IntegrationTestFixture
             JsonConvert.SerializeObject(requestBody),
             Encoding.UTF8,
             "application/json");
-        var expectedResponse = new ForbiddenResponse("User or password mismatch", string.Empty);
 
         // act
         var response = await Client.PostAsync(PostTokenPath, content);
-        var responseMessage = await response.Content.ReadAsStringAsync();
-        var responseBody = JsonConvert.DeserializeObject<ForbiddenResponse>(responseMessage);
 
         // assert
-        response.Should().Be403Forbidden();
-        responseBody.Should().BeEquivalentTo(expectedResponse,
-            options => options.Excluding(source => source.TraceId)
-        );
+        response.Should().Be403Forbidden().And.BeAs(new
+            {
+                type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3",
+                title = "FORBIDDEN_ERROR",
+                status = 403,
+                traceId = "0HMH5DLVSLJDP",
+                error = new
+                {
+                    msg = "User or password mismatch"
+                }
+            },
+            options => options.Excluding(source => source.traceId));
     }
 }

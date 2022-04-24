@@ -55,18 +55,23 @@ public class UserControllerTest : IntegrationTestFixture
         await DbContext.SaveChangesAsync();
         var accessToken = _auth.GenerateAccessToken(user.Username);
         Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
-        var expectedResponse = new NotFoundResponse("User not found", "");
 
         // act
         var response = await Client.GetAsync($"{UserPath}?username=non_existent_user");
-        var responseMessage = await response.Content.ReadAsStringAsync();
-        var responseBody = JsonConvert.DeserializeObject<NotFoundResponse>(responseMessage);
 
         // assert
-        response.Should().Be404NotFound();
-        responseBody.Should().BeEquivalentTo(expectedResponse,
-            options => options.Excluding(source => source.TraceId)
-        );
+        response.Should().Be404NotFound().And.BeAs(new
+            {
+                type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.4",
+                title = "NOT_FOUND_ERROR",
+                status = 404,
+                traceId = "0HMH5DLVSLJDP",
+                error = new
+                {
+                    msg = "User not found"
+                }
+            },
+            options => options.Excluding(source => source.traceId));
     }
 
     [Fact(DisplayName = "Should return ok on me when authorized")]
