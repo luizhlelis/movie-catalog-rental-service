@@ -20,7 +20,7 @@ public class MovieControllerTest : IntegrationTestFixture
     public MovieControllerTest()
     {
         var auth = TestServiceScope.ServiceProvider.GetRequiredService<Authentication>();
-        var user = new User("movie-test-user-admin", "StrongPassword@123", Role.Admin);
+        var user = new User("movie-test-user-admin", "StrongPassword@123", "12345", Role.Admin);
         var registeredUser =
             DbContext.Users.FirstOrDefault(dbUser => dbUser.Username == user.Username);
 

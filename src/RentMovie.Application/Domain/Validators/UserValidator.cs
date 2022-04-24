@@ -14,7 +14,7 @@ public class UserValidator : AbstractValidator<UserDto>
 
         RuleFor(user => user.ZipCode)
             .NotEmpty()
-            .Matches("^\\d{5}$)|(^\\d{9}$)|(^\\d{5}-\\d{4}$");
+            .Matches(@"\d{5}(?:[-\s]\d{4})?");
 
         RuleFor(user => user.Password)
             .MinimumLength(8)

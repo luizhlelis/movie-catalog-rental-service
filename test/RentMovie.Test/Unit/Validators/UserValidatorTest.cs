@@ -26,7 +26,8 @@ public class UserValidatorTest
     public void Validate_WhenHasAllRequirements_ShouldReturnTrue()
     {
         // arrange
-        var user = new UserDto {Username = ValidUsername, Password = ValidPassword};
+        var user = new UserDto
+            {Username = ValidUsername, Password = ValidPassword, ZipCode = "12345"};
 
         // act
         var validationResult = new UserValidator(_mockedDatabase).Validate(user);
@@ -42,7 +43,7 @@ public class UserValidatorTest
     public void Validate_WhenNullOrEmptyUsername_ShouldReturnFalse(string username)
     {
         // arrange
-        var user = new UserDto {Username = username, Password = ValidPassword};
+        var user = new UserDto {Username = username, Password = ValidPassword, ZipCode = "12345"};
 
         // act
         var validationResult = new UserValidator(_mockedDatabase).Validate(user);
@@ -57,7 +58,8 @@ public class UserValidatorTest
     public void Validate_WhenUsernameBiggerThanTwenty_ShouldReturnFalse()
     {
         // arrange
-        var user = new UserDto {Username = "assasasasasasasasasasasasas", Password = ValidPassword};
+        var user = new UserDto
+            {Username = "assasasasasasasasasasasasas", Password = ValidPassword, ZipCode = "12345"};
 
         // act
         var validationResult = new UserValidator(_mockedDatabase).Validate(user);
@@ -73,7 +75,7 @@ public class UserValidatorTest
     public void Validate_WhenHasNoUppercaseCharacter_ShouldReturnFalse()
     {
         // arrange
-        var user = new UserDto {Username = ValidUsername, Password = "abcd@123"};
+        var user = new UserDto {Username = ValidUsername, Password = "abcd@123", ZipCode = "12345"};
 
         // act
         var validationResult = new UserValidator(_mockedDatabase).Validate(user);
@@ -88,7 +90,7 @@ public class UserValidatorTest
     public void Validate_WhenDoesNotHaveMinimumLenght_ShouldReturnFalse()
     {
         // arrange
-        var user = new UserDto {Username = ValidUsername, Password = "Abcd@12"};
+        var user = new UserDto {Username = ValidUsername, Password = "Abcd@12", ZipCode = "12345"};
 
         // act
         var validationResult = new UserValidator(_mockedDatabase).Validate(user);
@@ -103,7 +105,8 @@ public class UserValidatorTest
     public void Validate_WhenHasNoNumber_ShouldReturnFalse()
     {
         // arrange
-        var user = new UserDto {Username = ValidUsername, Password = "Abcd@abcd"};
+        var user = new UserDto
+            {Username = ValidUsername, Password = "Abcd@abcd", ZipCode = "12345"};
 
         // act
         var validationResult = new UserValidator(_mockedDatabase).Validate(user);
@@ -118,7 +121,7 @@ public class UserValidatorTest
     public void Validate_WhenHasNoSpecialCharacter_ShouldReturnFalse()
     {
         // arrange
-        var user = new UserDto {Username = ValidUsername, Password = "Abcda123"};
+        var user = new UserDto {Username = ValidUsername, Password = "Abcda123", ZipCode = "12345"};
 
         // act
         var validationResult = new UserValidator(_mockedDatabase).Validate(user);
