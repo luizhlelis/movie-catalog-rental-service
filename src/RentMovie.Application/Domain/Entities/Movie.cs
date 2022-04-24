@@ -59,8 +59,8 @@ public class Movie : IdentifiableEntity
         Cast = null;
     }
 
-    public void DecreaseAmountAvailable()
+    public void Remove(int quantity)
     {
-        AmountAvailable--;
+        AmountAvailable -= quantity;
     }
 }

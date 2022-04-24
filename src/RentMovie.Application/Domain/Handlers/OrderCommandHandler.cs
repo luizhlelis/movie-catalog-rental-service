@@ -53,10 +53,11 @@ public class OrderCommandHandler : IOrderDrivingPort
 
         foreach (var movie in movies)
         {
-            if (movie.AmountAvailable is 0)
-                return null;
+            var itemInCart = cart.Items[movie.Id];
+            movie.Remove(itemInCart.Amount);
 
-            movie.DecreaseAmountAvailable();
+            if (movie.AmountAvailable < 0)
+                return null;
         }
 
         order.FinalizeIt();
