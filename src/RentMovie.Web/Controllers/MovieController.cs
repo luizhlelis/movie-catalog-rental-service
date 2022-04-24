@@ -24,7 +24,6 @@ public class MovieController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
     public async Task<IActionResult> Get([FromQuery] Guid movieId)
     {
         var movie = await _databaseDrivenPort.GetMovieByIdAsync(movieId);
@@ -36,7 +35,6 @@ public class MovieController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
     public async Task<IActionResult> GetMovies([FromQuery] MoviesDto moviesDto)
     {
         var movies = await _databaseDrivenPort.GetMoviesAsync(moviesDto.Page, moviesDto.PageSize);

@@ -61,11 +61,15 @@ public class Startup
             options.OperationFilter<SwaggerDefaultValues>();
         });
 
-        // Database
+        // Databases
         services.AddDbContext<RentMovieContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("RentMovieContext")));
 
         services.AddScoped<IDatabaseDrivenPort, DatabaseAdapter>();
+
+        /* InMemory Cache: using this approach because memory consumption isn't an issue yet and
+           tha app is running in a single instance */
+        services.AddDistributedMemoryCache();
 
         // API Validators
         services.AddScoped<IValidatorFactory>(serviceProvider =>
@@ -78,6 +82,8 @@ public class Startup
         services.AddScoped<IValidator<MovieCategory>, MovieCategoryValidator>();
         services.AddScoped<IValidator<Movie>, MovieValidator>();
         services.AddScoped<IValidator<RentCategory>, RentCategoryValidator>();
+        services.AddScoped<IValidator<MoviesDto>, MoviesDtoValidator>();
+        services.AddScoped<IValidator<CartDto>, CartDtoValidator>();
 
         // CORS
         services.AddCors(options =>
