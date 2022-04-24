@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using RentMovie.Application.Domain.Entities;
 using RentMovie.Application.Domain.Enums;
+using RentMovie.Application.Dtos;
 using RentMovie.Application.Ports;
 
 namespace RentMovie.Infrastructure.Adapters;
@@ -21,6 +22,14 @@ public class DatabaseAdapter : IDatabaseDrivenPort
         var entry = await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
         return entry.Entity;
+    }
+
+    public async Task<User> UpdateUserAsync(string username, UpdateUserDto userDto)
+    {
+        var entry = await _dbContext.Users.FirstAsync(user => user.Username == username);
+        entry.Bind(userDto);
+        await _dbContext.SaveChangesAsync();
+        return entry;
     }
 
     public async Task<User?> GetUserAsync(string username)

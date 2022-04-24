@@ -34,7 +34,7 @@ public class Order : IdentifiableEntity
     // Stub Method
     public void LoadShippingPrice(string originZipCode)
     {
-        // destiny ZipCode = Customer.ZipCode
+        // destiny ZipCode = Customer.ZipCode, Address = Customer.Adress
         ShippingPrice = 10;
     }
 

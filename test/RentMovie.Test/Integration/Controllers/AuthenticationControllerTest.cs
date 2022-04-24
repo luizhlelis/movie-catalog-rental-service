@@ -22,7 +22,8 @@ public class AuthenticationControllerTest : IntegrationTestFixture
     [Fact(DisplayName = "Should return ok with token when valid owner credential")]
     public async Task PostToken_WhenValidOwnerCredential_ShouldReturnOkWithToken()
     {
-        var user = new User("valid-username-1", ValidPassword, "12345");
+        var user = new User("valid-username-1", ValidPassword, "12345",
+            "1458 Sauer Courts Suite 328", "John Doe");
         await DbContext.Users.AddAsync(user);
         await DbContext.SaveChangesAsync();
 
@@ -110,7 +111,8 @@ public class AuthenticationControllerTest : IntegrationTestFixture
     [Fact(DisplayName = "Should return forbidden when password mismatch")]
     public async Task PostToken_WhenPasswordMismatch_ShouldReturnForbidden()
     {
-        var user = new User("valid-username-4", ValidPassword, "12345");
+        var user = new User("valid-username-4", ValidPassword, "12345",
+            "1458 Sauer Courts Suite 328", "John Doe");
         await DbContext.Users.AddAsync(user);
         await DbContext.SaveChangesAsync();
 

@@ -31,7 +31,10 @@ public class UserControllerTest : IntegrationTestFixture
     {
         // arrange
         var requestBody = new UserDto
-            {Username = "user-controller-1", Password = ValidPassword, ZipCode = "12345"};
+        {
+            Username = "user-controller-1", Password = ValidPassword, ZipCode = "12345",
+            Address = "1458 Sauer Courts Suite 328", GivenName = "John Doe"
+        };
         var content = new StringContent(
             JsonConvert.SerializeObject(requestBody),
             Encoding.UTF8,
@@ -51,7 +54,8 @@ public class UserControllerTest : IntegrationTestFixture
     public async Task GetUser_WhenUserDoesNotExist_ShouldReturnNotFound()
     {
         // arrange
-        var user = new User("get-user-admin-requester", ValidPassword, "12345", Role.Admin);
+        var user = new User("get-user-admin-requester", ValidPassword, "12345",
+            "1458 Sauer Courts Suite 328", "John Doe", Role.Admin);
         await DbContext.Users.AddAsync(user);
         await DbContext.SaveChangesAsync();
         var accessToken = _auth.GenerateAccessToken(user.Username);
@@ -82,7 +86,8 @@ public class UserControllerTest : IntegrationTestFixture
         var username = "get-user-me";
         var accessToken = _auth.GenerateAccessToken(username);
         Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
-        await DbContext.Users.AddAsync(new User(username, ValidPassword, "12345"));
+        await DbContext.Users.AddAsync(new User(username, ValidPassword,
+            "1458 Sauer Courts Suite 328", "John Doe", "12345"));
         await DbContext.SaveChangesAsync();
 
         // act
@@ -99,7 +104,8 @@ public class UserControllerTest : IntegrationTestFixture
         var username = "delete-user-me";
         var accessToken = _auth.GenerateAccessToken(username);
         Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
-        await DbContext.Users.AddAsync(new User(username, ValidPassword, "12345"));
+        await DbContext.Users.AddAsync(new User(username, ValidPassword,
+            "1458 Sauer Courts Suite 328", "John Doe", "12345"));
         await DbContext.SaveChangesAsync();
 
         // act
@@ -116,7 +122,11 @@ public class UserControllerTest : IntegrationTestFixture
     public async Task PostAdminUser_WhenUserIsNotAdmin_ShouldReturnUnauthorized()
     {
         // arrange
-        var requestBody = new UserDto {Username = "post-user-admin", Password = ValidPassword};
+        var requestBody = new UserDto
+        {
+            Username = "post-user-admin", Password = ValidPassword,
+            Address = "1458 Sauer Courts Suite 328", GivenName = "John Doe"
+        };
         var content = new StringContent(
             JsonConvert.SerializeObject(requestBody),
             Encoding.UTF8,

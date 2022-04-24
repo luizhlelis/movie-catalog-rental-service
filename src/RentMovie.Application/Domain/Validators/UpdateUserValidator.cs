@@ -1,16 +1,18 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using RentMovie.Application.Dtos;
 using RentMovie.Application.Ports;
 
 namespace RentMovie.Application.Domain.Validators;
 
-public class UserValidator : AbstractValidator<UserDto>
+public class UpdateUserValidator : AbstractValidator<UpdateUserDto>
 {
-    public UserValidator(IDatabaseDrivenPort databaseDrivenPort)
+    public UpdateUserValidator(IDatabaseDrivenPort databaseDrivenPort,
+        IHttpContextAccessor contextAccessor)
     {
-        RuleFor(user => user.Username)
-            .NotEmpty()
-            .MaximumLength(20);
+        var claim = contextAccessor.HttpContext?.User.FindFirst(
+            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
+        var username = claim?.Value ?? "";
 
         RuleFor(user => user.Address)
             .NotEmpty()
@@ -34,15 +36,16 @@ public class UserValidator : AbstractValidator<UserDto>
             .Matches("[!@#$&*]")
             .WithMessage("Password must have at least one special character: !@#$&*");
 
-        RuleFor(user => user.Username)
-            .MustAsync(HasNotYetBeenRegistered)
-            .WithMessage("User has already been registered");
+        RuleFor(user => user)
+            .MustAsync(HasAlreadyBeenRegistered)
+            .WithMessage("User not found")
+            .WithErrorCode(ErrorCode.NotFound);
 
-        async Task<bool> HasNotYetBeenRegistered(string username,
+        async Task<bool> HasAlreadyBeenRegistered(UpdateUserDto userDto,
             CancellationToken cancellationToken)
         {
             var user = await databaseDrivenPort.GetUserAsync(username);
-            return user is null;
+            return user is not null;
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿namespace RentMovie.Application.Dtos;
 
-public class UserDto
+public class UpdateUserDto
 {
-    public string Username { get; set; }
-
     public string ZipCode { get; set; }
 
     public string Address { get; set; }

@@ -1,11 +1,14 @@
 using System.Linq.Expressions;
 using RentMovie.Application.Domain.Entities;
+using RentMovie.Application.Dtos;
 
 namespace RentMovie.Application.Ports;
 
 public interface IDatabaseDrivenPort
 {
     Task<User> AddUserAsync(User user);
+
+    Task<User> UpdateUserAsync(string username, UpdateUserDto user);
 
     Task<User?> GetUserAsync(string username);
 

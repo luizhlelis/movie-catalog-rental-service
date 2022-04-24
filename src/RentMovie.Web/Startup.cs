@@ -89,6 +89,8 @@ public class Startup
         services.AddScoped<IValidator<MoviesDto>, MoviesDtoValidator>();
         services.AddScoped<IValidator<CartDto>, CartDtoValidator>();
         services.AddScoped<IValidator<OrderDto>, OrderValidator>();
+        services.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
+        services.AddScoped<IValidator<CreateOrderDto>, CreateOrderDtoValidator>();
 
         // Handlers
         services.AddScoped<ICartDrivingPort, CartCommandHandler>();
