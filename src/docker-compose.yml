@@ -4,24 +4,39 @@ services:
   rent-movie-api:
     container_name: rent-movie-api
     environment:
-      ConnectionStrings_RentMovieContext: "Data Source=sql-server-database; Initial Catalog=RentMovieDb; User Id=sa; Password=1StrongPassword*"
+      ConnectionStrings__RentMovieContext: "Data Source=sql-server-database; Initial Catalog=RentMovie; User Id=sa; Password=1StrongPassword*"
     working_dir: /app
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - APP_PATH=RentMovie
     depends_on:
       - sql-server-database
-    command: "dotnet RentMovie.dll"
+    command: "dotnet RentMovie.Web.dll"
     ports:
       - "80:80"
 
   sql-server-database:
     container_name: sql-server-database
     image: mcr.microsoft.com/mssql/server
+    user: root
     environment:
       SA_PASSWORD: 1StrongPassword*
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+  
+  migrations:
+    container_name: migrations
+    build:
+      context: .
+      dockerfile: Dockerfile.migrations
+    working_dir: /app
+    environment:
+      PATH: "$PATH:$HOME/:dotnet/tools/"
+      PROJECT: RentMovie.Infrastructure/RentMovie.Infrastructure.csproj
+      STARTUP_PROJECT: RentMovie.Web/RentMovie.Web.csproj
+      SQL_CONTEXT_CLASS: RentMovieContext
+      ConnectionStrings__RentMovieContext: "Data Source=sql-server-database; Initial Catalog=RentMovie; User Id=sa; Password=1StrongPassword*"
+    command: "bash ./Scripts/apply-existing-migrations.sh"
+    depends_on:
+      - sql-server-database

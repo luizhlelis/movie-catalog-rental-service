@@ -1,0 +1,11 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0
+
+# Install EF Core tools
+RUN dotnet tool install --global dotnet-ef --version 6.0
+
+WORKDIR /app
+
+ADD RentMovie.Web ./RentMovie.Web
+ADD RentMovie.Infrastructure ./RentMovie.Infrastructure
+ADD RentMovie.Application ./RentMovie.Application
+ADD Scripts ./Scripts
