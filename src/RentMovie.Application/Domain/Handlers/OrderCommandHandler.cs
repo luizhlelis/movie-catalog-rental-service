@@ -68,7 +68,10 @@ public class OrderCommandHandler : IOrderDrivingPort
 
         order.FinalizeIt();
 
-        await _databaseDrivenPort.UpdateEntriesAsync();
+        var removeFromCacheTask = _cache.RemoveAsync(command.Username);
+        var updateEntriesTask = _databaseDrivenPort.UpdateEntriesAsync();
+
+        await Task.WhenAll(removeFromCacheTask, updateEntriesTask);
 
         return order;
     }

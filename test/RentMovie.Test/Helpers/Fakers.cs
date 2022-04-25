@@ -40,7 +40,8 @@ public static class Fakers
             .RuleFor(movie => movie.RentCategory,
                 faker => faker.PickRandom(GetValidRentCategories()))
             .RuleFor(movie => movie.Cast, GetValidCast())
-            .RuleFor(movie => movie.Director, faker => faker.PickRandom(GetValidDirectors()));
+            .RuleFor(movie => movie.Director, faker => faker.PickRandom(GetValidDirectors()))
+            .RuleFor(movie => movie.AmountAvailable, 10);
 
         return faker.Generate();
     }

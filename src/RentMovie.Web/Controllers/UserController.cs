@@ -62,7 +62,7 @@ public class UserController : BaseController
     {
         var userToCreate = new User(userDto, Role.Admin);
         var user = await _databaseDrivenPort.AddUserAsync(userToCreate);
-        return Created("v1/user/{username}", user);
+        return Created($"v1/user/{user.Username}", user);
     }
 
     [HttpPut]

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using RentMovie.Application.Commands;
@@ -7,6 +8,7 @@ using RentMovie.Application.Domain.Enums;
 using RentMovie.Application.Dtos;
 using RentMovie.Application.Ports;
 using RentMovie.Web.Filters;
+using RentMovie.Web.Responses;
 
 namespace RentMovie.Web.Controllers;
 
@@ -35,7 +37,11 @@ public class CartController : BaseController
         var username = GetUsernameFromToken();
         var response = await _cache.GetAsync(username);
 
-        return Ok(response);
+        if (response is null)
+            return NotFound(new NotFoundResponse("There is no cart registered.",
+                Activity.Current?.Id ?? ""));
+
+        return Ok(new Cart(response));
     }
 
     [HttpPost]
@@ -44,6 +50,13 @@ public class CartController : BaseController
         var username = GetUsernameFromToken();
         var cart = new Cart();
         var expireIn = _configuration.GetValue<int>("Cache:ExpirationInHoursRelativeToNow");
+
+        var cartContent = await _cache.GetAsync(username);
+
+        if (cartContent is not null)
+            return BadRequest(new BadRequestResponse(
+                "There is another cart registered, please delete it first",
+                Activity.Current?.Id ?? ""));
 
         await _cache.SetAsync(
             username,

@@ -60,6 +60,25 @@ public class NotFoundResponse : IErrorResponse
     public ErrorMessage Error { get; set; }
 }
 
+public class BadRequestResponse : IErrorResponse
+{
+    public BadRequestResponse(string message, string traceparent)
+    {
+        TraceId = traceparent;
+        Error = new ErrorMessage {Msg = message};
+    }
+
+    public string Type => "https://tools.ietf.org/html/rfc7231#section-6.5.1";
+
+    public string Title => "BAD_REQUEST_ERROR";
+
+    public int Status => 400;
+
+    public string TraceId { get; set; }
+
+    public ErrorMessage Error { get; set; }
+}
+
 public static class ErrorResponseFactory
 {
     public static IErrorResponse CreateErrorResponse(ModelStateDictionary modelState,

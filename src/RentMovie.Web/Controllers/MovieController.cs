@@ -48,7 +48,7 @@ public class MovieController : ControllerBase
     {
         var response = await _databaseDrivenPort.AddMovieAsync(movie);
 
-        return Created("v1/movie/{id}", response);
+        return Created($"v1/movie/{response.Id}", response);
     }
 
     [HttpPut("{id}")]
