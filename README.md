@@ -48,9 +48,21 @@ To run all the automated test, type the following command in the [src](./src) fo
 dotnet test
 ```
 
+If you're running the app in docker, open the following link in your browser:
+
+```shell
+http://localhost/swagger/index.html
+```
+
+Otherwise, if you're running it locally, the port will be different:
+
+```shell
+https://localhost:7211/swagger/index.html
+```
+
 ## Design and Architecture decisions
 
-- Rich Domain Models (validations and behaviors inside the domain entities)
+- Rich Domain Models (behaviors inside the domain entities)
 
 - [Hexagonal architecture](https://alistair.cockburn.us/hexagonal-architecture/)
 
