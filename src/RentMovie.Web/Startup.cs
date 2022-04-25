@@ -15,6 +15,7 @@ using RentMovie.Application.Ports;
 using RentMovie.Infrastructure;
 using RentMovie.Infrastructure.Adapters;
 using RentMovie.Web.Filters;
+using RentMovie.Web.Responses;
 using RentMovie.Web.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -138,10 +139,7 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
         IApiVersionDescriptionProvider provider)
     {
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
+        app.UseCustomExceptionHandler();
 
         app.UseSwagger();
         app.UseSwaggerUI(c =>
