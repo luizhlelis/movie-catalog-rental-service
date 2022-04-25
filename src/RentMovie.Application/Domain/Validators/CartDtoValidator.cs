@@ -16,7 +16,7 @@ public class CartDtoValidator : AbstractValidator<CartDto>
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
         var username = claim?.Value ?? "";
 
-        RuleFor(cart => cart.MovieId)
+        RuleFor(cart => cart)
             .NotEmpty()
             .MustAsync(MovieAlreadyRegisteredAndAvailable)
             .WithMessage("Movie not found or not available to rent")
@@ -28,10 +28,10 @@ public class CartDtoValidator : AbstractValidator<CartDto>
             .WithMessage("Cart not found or expired, you must create it first")
             .WithErrorCode(ErrorCode.NotFound);
 
-        async Task<bool> MovieAlreadyRegisteredAndAvailable(Guid movieId,
+        async Task<bool> MovieAlreadyRegisteredAndAvailable(CartDto cart,
             CancellationToken cancellationToken)
         {
-            var movie = await databaseDrivenPort.GetMovieByIdAsync(movieId);
+            var movie = await databaseDrivenPort.GetMovieByIdAsync(cart.MovieId);
 
             return movie is not null && movie.AmountAvailable > 0;
         }

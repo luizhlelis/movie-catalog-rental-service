@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -155,5 +154,47 @@ public class CartControllerTest : IntegrationTestFixture
 
         // assert
         response.Should().Be204NoContent();
+    }
+
+    [Fact(DisplayName =
+        "Should return not found when movie is not available to rent")]
+    public async Task PutCart_WhenMovieNotAvailable_ShouldReturnNotFound()
+    {
+        // arrange
+        var username = "cart-controller-4";
+        var user = new User(username, "StrongPass@123", "12345",
+            "1458 Sauer Courts Suite 328", "John Doe");
+        await DbContext.Users.AddAsync(user);
+        var movie = new Movie("Titanic 2", "Boat in sea", 1994, 0);
+        movie.RentCategory = new RentCategory("FakeRent2", 2);
+        await DbContext.Movies.AddAsync(movie);
+        await DbContext.SaveChangesAsync();
+        var accessToken = _auth.GenerateAccessToken(username);
+        Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+        var registeredCart = new Cart();
+        await _cache.SetAsync(username, registeredCart.ToBytes());
+
+        var content = new StringContent(
+            JsonConvert.SerializeObject(new CartDto {MovieId = movie.Id}),
+            Encoding.UTF8,
+            "application/json");
+
+        // act
+        var response = await Client.PutAsync(CartPath, content);
+
+        // assert
+        response.Should().Be404NotFound().And.BeAs(
+            new
+            {
+                type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.4",
+                title = "NOT_FOUND_ERROR",
+                status = 404,
+                traceId = "0HMH5DLVSLJDP",
+                error = new
+                {
+                    msg = "Movie not found or not available to rent"
+                }
+            },
+            options => options.Excluding(source => source.traceId));
     }
 }

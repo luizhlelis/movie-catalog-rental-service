@@ -50,6 +50,11 @@ public class Cart
         TotalPrice += cartItem.Price;
     }
 
+    public bool IsEmpty()
+    {
+        return !Items.Any();
+    }
+
     public byte[] ToBytes()
     {
         return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this));
