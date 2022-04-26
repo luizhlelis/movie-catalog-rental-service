@@ -11,6 +11,7 @@ public class Order : IdentifiableEntity
         PaymentMethod paymentMethod)
     {
         ItemsTotalPrice = itemsTotalPrice;
+        TotalPrice = itemsTotalPrice;
         PaymentMethod = paymentMethod;
         Status = OrderStatus.Created;
         Customer = customer;

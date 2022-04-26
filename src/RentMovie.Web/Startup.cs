@@ -92,6 +92,7 @@ public class Startup
         services.AddScoped<IValidator<OrderDto>, OrderValidator>();
         services.AddScoped<IValidator<UpdateUserDto>, UpdateUserValidator>();
         services.AddScoped<IValidator<CreateOrderDto>, CreateOrderDtoValidator>();
+        services.AddScoped<IValidator<GetOrderDto>, GetOrderValidator>();
 
         // Handlers
         services.AddScoped<ICartDrivingPort, CartCommandHandler>();

@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using RentMovie.Application.Domain.Entities;
 using RentMovie.Application.Domain.Enums;
 using RentMovie.Application.Dtos;
@@ -160,6 +161,14 @@ public class DatabaseAdapter : IDatabaseDrivenPort
         await _dbContext.SaveChangesAsync();
     }
 
+    public async Task UpdateMoviesAsync(HashSet<Movie> movies)
+    {
+        foreach (var movie in movies)
+            _dbContext.Entry(movie).State = EntityState.Modified;
+
+        await _dbContext.SaveChangesAsync();
+    }
+
     public async Task<Movie> DeleteMovieAsync(Movie movie)
     {
         var entry = _dbContext.Movies.Remove(movie);
@@ -195,14 +204,16 @@ public class DatabaseAdapter : IDatabaseDrivenPort
 
     public async Task<Order> DeleteOrderAsync(Guid id)
     {
-        var order = await _dbContext.Orders.Where(order => order.Id == id).FirstAsync();
+        var order = await _dbContext.Orders.SingleAsync(order => order.Id == id);
         order.DeleteIt();
         await _dbContext.SaveChangesAsync();
         return order;
     }
 
-    public async Task UpdateEntriesAsync()
+    public async Task<Order> UpdateOrderAsync(Order order)
     {
+        _dbContext.Entry(order).State = EntityState.Modified;
         await _dbContext.SaveChangesAsync();
+        return order;
     }
 }

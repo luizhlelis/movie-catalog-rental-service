@@ -161,7 +161,7 @@ public class CartControllerTest : IntegrationTestFixture
     public async Task PutCart_WhenMovieNotAvailable_ShouldReturnNotFound()
     {
         // arrange
-        var username = "cart-controller-4";
+        var username = "cart-controller-5";
         var user = new User(username, "StrongPass@123", "12345",
             "1458 Sauer Courts Suite 328", "John Doe");
         await DbContext.Users.AddAsync(user);

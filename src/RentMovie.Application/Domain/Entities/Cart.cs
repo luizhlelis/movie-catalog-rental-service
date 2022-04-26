@@ -24,7 +24,7 @@ public class Cart
         Items = deserializedCart.Items;
     }
 
-    public double TotalPrice { get; private set; }
+    public double TotalPrice { get; set; }
 
     public Dictionary<Guid, CartItem> Items { get; private set; }
 

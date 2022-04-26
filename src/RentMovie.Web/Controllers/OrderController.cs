@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
 using RentMovie.Application.Commands;
 using RentMovie.Application.Domain.Enums;
 using RentMovie.Application.Dtos;
 using RentMovie.Application.Ports;
 using RentMovie.Web.Filters;
+using RentMovie.Web.Responses;
 
 namespace RentMovie.Web.Controllers;
 
@@ -16,21 +17,19 @@ namespace RentMovie.Web.Controllers;
 [Route("v{version:apiVersion}/[controller]")]
 public class OrderController : BaseController
 {
-    private readonly IDistributedCache _cache;
     private readonly IOrderDrivingPort _orderHandler;
     private readonly IDatabaseDrivenPort _databaseDrivenPort;
 
-    public OrderController(IDistributedCache cache, IOrderDrivingPort orderHandler,
+    public OrderController(IOrderDrivingPort orderHandler,
         IDatabaseDrivenPort databaseDrivenPort)
     {
-        _cache = cache;
         _orderHandler = orderHandler;
         _databaseDrivenPort = databaseDrivenPort;
     }
 
     // GET
     [HttpGet]
-    public async Task<IActionResult> Index([FromQuery] OrderDto getOrderDto)
+    public async Task<IActionResult> GetOrder([FromQuery] GetOrderDto getOrderDto)
     {
         return Ok(await _databaseDrivenPort.GetOrderByIdAsync(getOrderDto.OrderId));
     }
@@ -45,7 +44,10 @@ public class OrderController : BaseController
             PaymentMethod = orderDto.PaymentMethod, Username = username
         });
 
-        return Created($"v1/order/{response.Id}", response);
+        return response is null
+            ? BadRequest(new BadRequestResponse("Your cart is empty!",
+                Activity.Current?.Id ?? HttpContext.TraceIdentifier))
+            : Created($"v1/order/{response.Id}", response);
     }
 
     [HttpPut("finish")]
@@ -59,8 +61,9 @@ public class OrderController : BaseController
         });
 
         return result is null
-            ? BadRequest(
-                "Some of the items in your cart are not available anymore, please delete your cart and start again")
+            ? BadRequest(new BadRequestResponse(
+                "Some of the items in your cart are not available anymore, please delete your cart and start again",
+                Activity.Current?.Id ?? HttpContext.TraceIdentifier))
             : NoContent();
     }
 

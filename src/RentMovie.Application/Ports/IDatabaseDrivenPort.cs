@@ -26,6 +26,8 @@ public interface IDatabaseDrivenPort
 
     Task UpdateMovieAsync();
 
+    Task UpdateMoviesAsync(HashSet<Movie> movies);
+
     Task<Movie> DeleteMovieAsync(Movie movie);
 
     Task<List<Movie>> GetMovieByExpressionAsync(Expression<Func<Movie, bool>> expression);
@@ -38,5 +40,5 @@ public interface IDatabaseDrivenPort
 
     Task<Order> DeleteOrderAsync(Guid id);
 
-    Task UpdateEntriesAsync();
+    Task<Order> UpdateOrderAsync(Order order);
 }

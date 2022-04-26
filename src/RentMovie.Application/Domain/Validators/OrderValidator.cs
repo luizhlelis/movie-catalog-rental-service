@@ -17,7 +17,7 @@ public class OrderValidator : AbstractValidator<OrderDto>
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
         var username = claim?.Value ?? "";
 
-        RuleFor(orderDto => orderDto.OrderId)
+        RuleFor(orderDto => orderDto)
             .NotEmpty()
             .MustAsync(CustomerOrderAlreadyRegistered)
             .WithMessage("There is no order registered with that Id")
@@ -29,10 +29,10 @@ public class OrderValidator : AbstractValidator<OrderDto>
             .WithMessage("Cart not found or expired, you must create it first")
             .WithErrorCode(ErrorCode.NotFound);
 
-        async Task<bool> CustomerOrderAlreadyRegistered(Guid orderId,
+        async Task<bool> CustomerOrderAlreadyRegistered(OrderDto orderDto,
             CancellationToken cancellationToken)
         {
-            var order = await databaseDrivenPort.GetOrderByIdAsync(orderId);
+            var order = await databaseDrivenPort.GetOrderByIdAsync(orderDto.OrderId);
 
             return order is not null && username == order.Customer.Username &&
                    order.Status is OrderStatus.Created;

@@ -24,10 +24,13 @@ public class OrderCommandHandler : IOrderDrivingPort
         _cache = cache;
     }
 
-    public async Task<Order> Handle(CreateOrderCommand command)
+    public async Task<Order?> Handle(CreateOrderCommand command)
     {
         var cartContent = await _cache.GetAsync(command.Username);
         var cart = new Cart(cartContent);
+
+        if (cart.IsEmpty()) return null;
+
         var originZipCode = _configuration["Shipping:OriginZipCode"];
         var user = await _databaseDrivenPort.GetUserAsync(command.Username);
 
@@ -57,22 +60,27 @@ public class OrderCommandHandler : IOrderDrivingPort
         await _paymentDrivenPort.ChargeUser(order.TotalPrice, order.PaymentMethod,
             command.Username);
 
+        var moviesToUpdate = new HashSet<Movie>();
+
         foreach (var movie in movies)
         {
             var itemInCart = cart.Items[movie.Id];
-            movie.Remove(itemInCart.Amount);
+            movie.RemoveAmountFromStock(itemInCart.Amount);
 
             if (movie.AmountAvailable < 0)
                 return null;
+
+            moviesToUpdate.Add(movie);
         }
 
         order.FinalizeIt();
 
         var removeFromCacheTask = _cache.RemoveAsync(command.Username);
-        var updateEntriesTask = _databaseDrivenPort.UpdateEntriesAsync();
+        var updateOrderTask = _databaseDrivenPort.UpdateOrderAsync(order);
+        var updateMoviesTask = _databaseDrivenPort.UpdateMoviesAsync(moviesToUpdate);
 
-        await Task.WhenAll(removeFromCacheTask, updateEntriesTask);
+        await Task.WhenAll(removeFromCacheTask, updateOrderTask, updateMoviesTask);
 
-        return order;
+        return await updateOrderTask;
     }
 }

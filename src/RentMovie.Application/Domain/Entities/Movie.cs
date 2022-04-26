@@ -59,7 +59,7 @@ public class Movie : IdentifiableEntity
         Cast = null;
     }
 
-    public void Remove(int quantity)
+    public void RemoveAmountFromStock(int quantity)
     {
         AmountAvailable -= quantity;
     }
