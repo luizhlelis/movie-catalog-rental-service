@@ -92,7 +92,7 @@ public class MovieControllerTest : IntegrationTestFixture
     public async Task PutMovie_WhenMovieExists_ShouldReturnNoContent()
     {
         // arrange
-        var movie = Fakers.GetValidMovie();
+        var movie = new Movie("The Godfather", "Synopsis", 1972, 10);
         await DbContext.Movies.AddAsync(movie);
         await DbContext.SaveChangesAsync();
 

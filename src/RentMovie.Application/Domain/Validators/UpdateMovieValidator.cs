@@ -27,22 +27,6 @@ public class UpdateMovieValidator : AbstractValidator<UpdateMovieDto>
             .GreaterThan(1800)
             .LessThanOrEqualTo(DateTime.Now.Year);
 
-        RuleFor(movie => movie.Category)
-            .NotNull()
-            .SetValidator(new MovieCategoryValidator());
-
-        RuleFor(movie => movie.RentCategory)
-            .NotNull()
-            .SetValidator(new RentCategoryValidator());
-
-        RuleFor(movie => movie.Cast)
-            .NotNull()
-            .SetValidator(new CastValidator());
-
-        RuleFor(movie => movie.Director)
-            .NotNull()
-            .SetValidator(new DirectorValidator());
-
         async Task<bool> HasAlreadyBeenRegistered(UpdateMovieDto movieToSearch,
             CancellationToken cancellationToken)
         {

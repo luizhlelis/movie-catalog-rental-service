@@ -13,12 +13,4 @@ public class UpdateMovieDto
     public int ReleaseYear { get; set; }
 
     public int AmountAvailable { get; set; }
-
-    public virtual MovieCategory? Category { get; set; }
-
-    public virtual RentCategory? RentCategory { get; set; }
-
-    public virtual ICollection<Actor>? Cast { get; set; }
-
-    public virtual Director? Director { get; set; }
 }
