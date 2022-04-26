@@ -140,4 +140,72 @@ public class UserControllerTest : IntegrationTestFixture
         // assert
         response.Should().Be401Unauthorized();
     }
+
+    [Fact(DisplayName = "Should return no content on put user when user exists")]
+    public async Task PutUser_WhenUserExists_ShouldReturnNoContent()
+    {
+        // arrange
+        var user = new User("put-user", ValidPassword, "12345", "1458 Sauer Courts Suite 328",
+            "John Doe");
+        await DbContext.Users.AddAsync(user);
+        await DbContext.SaveChangesAsync();
+
+        var requestBody = new UpdateUserDto
+        {
+            Address = "53641 Maximilian Harbors",
+            GivenName = "John Doe Jr",
+            Password = "StrongPass@123",
+            ZipCode = "53641 Maximilian Harbors"
+        };
+
+        var content = new StringContent(
+            JsonConvert.SerializeObject(requestBody),
+            Encoding.UTF8,
+            "application/json");
+        var accessToken = _auth.GenerateAccessToken(user.Username);
+        Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+
+        // act
+        var response = await Client.PutAsync(UserPath, content);
+
+        // assert
+        response.Should().Be204NoContent();
+    }
+
+    [Fact(DisplayName = "Should return not found on put user when user not found")]
+    public async Task PutUser_WhenUserNotFound_ShouldReturnNotFound()
+    {
+        // arrange
+        var requestBody = new UpdateUserDto
+        {
+            Address = "53641 Maximilian Harbors",
+            GivenName = "John Doe Jr",
+            Password = "StrongPass@123",
+            ZipCode = "53641 Maximilian Harbors"
+        };
+
+        var content = new StringContent(
+            JsonConvert.SerializeObject(requestBody),
+            Encoding.UTF8,
+            "application/json");
+        var accessToken = _auth.GenerateAccessToken("put-user-not-found");
+        Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {accessToken}");
+
+        // act
+        var response = await Client.PutAsync(UserPath, content);
+
+        // assert
+        response.Should().Be404NotFound().And.BeAs(new
+            {
+                type = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.4",
+                title = "NOT_FOUND_ERROR",
+                status = 404,
+                traceId = "",
+                error = new
+                {
+                    msg = "User not found"
+                }
+            },
+            options => options.Excluding(source => source.traceId));
+    }
 }

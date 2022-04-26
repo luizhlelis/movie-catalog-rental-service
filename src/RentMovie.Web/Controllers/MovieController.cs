@@ -53,17 +53,13 @@ public class MovieController : ControllerBase
 
     [HttpPut("{id}")]
     [AuthorizeOnly(Role.Admin)]
-    public async Task<IActionResult> Put(Guid id, [FromBody] Movie inputMovie)
+    public async Task<IActionResult> Put(Guid id, [FromBody] UpdateMovieDto inputMovie)
     {
         var movie = await _databaseDrivenPort.GetMovieByIdAsync(id);
 
-        if (movie is null)
-            return NotFound(new NotFoundResponse("Movie not found",
-                Activity.Current?.Id ?? HttpContext.TraceIdentifier));
+        movie?.Bind(inputMovie);
 
-        movie.Bind(inputMovie);
-
-        await _databaseDrivenPort.UpdateMovieAsync();
+        await _databaseDrivenPort.UpdateMovieAsync(movie);
 
         return NoContent();
     }

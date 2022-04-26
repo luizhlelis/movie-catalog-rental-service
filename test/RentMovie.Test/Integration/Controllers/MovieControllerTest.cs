@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -85,5 +86,28 @@ public class MovieControllerTest : IntegrationTestFixture
                     }
                 },
                 options => options.Excluding(source => source.traceId));
+    }
+
+    [Fact(DisplayName = "Should return no content on update movie when movie exists")]
+    public async Task PutMovie_WhenMovieExists_ShouldReturnNoContent()
+    {
+        // arrange
+        var movie = Fakers.GetValidMovie();
+        await DbContext.Movies.AddAsync(movie);
+        await DbContext.SaveChangesAsync();
+
+        movie.Synopsis = "New Synopsis";
+        movie.AmountAvailable = 3;
+
+        var content = new StringContent(
+            JsonConvert.SerializeObject(movie),
+            Encoding.UTF8,
+            "application/json");
+
+        // act
+        var response = await Client.PutAsync($"{MoviePath}/{movie.Id}", content);
+
+        // assert
+        response.Should().Be204NoContent();
     }
 }

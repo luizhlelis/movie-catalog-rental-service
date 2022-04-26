@@ -24,7 +24,7 @@ public interface IDatabaseDrivenPort
 
     Task<Movie> AddMovieAsync(Movie movie);
 
-    Task UpdateMovieAsync();
+    Task UpdateMovieAsync(Movie movie);
 
     Task UpdateMoviesAsync(HashSet<Movie> movies);
 

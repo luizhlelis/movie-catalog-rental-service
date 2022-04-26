@@ -156,8 +156,10 @@ public class DatabaseAdapter : IDatabaseDrivenPort
         return entry.Entity;
     }
 
-    public async Task UpdateMovieAsync()
+    public async Task UpdateMovieAsync(Movie movie)
     {
+        var entry = _dbContext.Entry(movie);
+        entry.State = EntityState.Modified;
         await _dbContext.SaveChangesAsync();
     }
 

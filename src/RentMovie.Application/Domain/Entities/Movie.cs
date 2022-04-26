@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using RentMovie.Application.Dtos;
 using RentMovie.Application.Ports;
 
 namespace RentMovie.Application.Domain.Entities;
@@ -34,16 +35,12 @@ public class Movie : IdentifiableEntity
 
     public virtual Director? Director { get; set; }
 
-    public void Bind(Movie movie)
+    public void Bind(UpdateMovieDto movie)
     {
         Title = movie.Title;
         Synopsis = movie.Synopsis;
         ReleaseYear = movie.ReleaseYear;
         AmountAvailable = movie.AmountAvailable;
-        Category = movie.Category;
-        RentCategory = movie.RentCategory;
-        Cast = movie.Cast;
-        Director = movie.Director;
     }
 
     public Movie ShallowCopy()
