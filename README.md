@@ -70,3 +70,19 @@ https://localhost:7211/swagger/index.html
 
 > Font: [Hexagonal Architecture, there are always two sides to
 > every story](https://medium.com/ssense-tech/hexagonal-architecture-there-are-always-two-sides-to-every-story-bc0780ed7d9c)
+
+Follow bellow how the `Application` layer was concept:
+
+```shell
+\
+┣ Application
+┃ ┣ 📂 Commands (all commands to trigger this layer)
+┃ ┣ 📂 Dtos
+┃ ┣ 📂 Ports (ports from hexagonal architecture)
+┃ ┣ 📂 Domain
+┃    ┣ 📂 Entities (DB entities with behaviors: Rich Domain Models)
+┃    ┣ 📂 Enums
+┃    ┣ 📂 Handlers (complex behaviors: involves more than one entity)
+┃    ┣ 📂 Validators (all validations to prevent incorrect data to travel through other layers)
+┃    ┣ 📂 ValueObjects (represents a value and has no identity)
+```
