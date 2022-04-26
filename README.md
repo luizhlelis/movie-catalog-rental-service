@@ -60,6 +60,24 @@ Otherwise, if you're running it locally, the port will be different:
 https://localhost:7211/swagger/index.html
 ```
 
+## Credentials
+
+There are two pre-created users (created as seed in migrations). You can use the following credentials to login with each one them:
+
+```json
+{
+  "username": "admin-user",
+  "password": "StrongPassword@123"
+}
+```
+
+```json
+{
+  "username": "customer-user",
+  "password": "StrongPassword@123"
+}
+```
+
 ## Design and Architecture decisions
 
 - Rich Domain Models (behaviors inside the domain entities)
