@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentMovie.Infrastructure;
 
@@ -11,9 +12,10 @@ using RentMovie.Infrastructure;
 namespace RentMovie.Infrastructure.Migrations
 {
     [DbContext(typeof(RentMovieContext))]
-    partial class RentMovieContextModelSnapshot : ModelSnapshot
+    [Migration("20220426040747_FixCustomerUsername")]
+    partial class FixCustomerUsername
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

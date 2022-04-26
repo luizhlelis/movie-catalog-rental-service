@@ -39,7 +39,7 @@ public class RentMovieContext : DbContext
             new("admin-user", "StrongPassword@123", "980395900", "5036 Tierra Locks Suite 158",
                 "Admin User", Role.Admin),
             new("customer-user", "StrongPassword@123", "948019535", "570 Hackett Bridge",
-                "Admin User")
+                "Customer User")
         };
         modelBuilder.Entity<User>().HasData(users);
 
@@ -51,10 +51,12 @@ public class RentMovieContext : DbContext
         modelBuilder.Entity<Movie>().HasData(movie1);
         modelBuilder.Entity<RentCategory>().HasData(new
         {
-            Name = "Release", Price = 5.0, Movie = movie1
+            Name = "Release",
+            Price = 5.0,
+            Movie = movie1
         });
-        modelBuilder.Entity<MovieCategory>().HasData(new {Movie = movie1, Name = "Action"});
-        modelBuilder.Entity<Director>().HasData(new {Movie = movie1, Name = "Matt Reeves"});
+        modelBuilder.Entity<MovieCategory>().HasData(new { Movie = movie1, Name = "Action" });
+        modelBuilder.Entity<Director>().HasData(new { Movie = movie1, Name = "Matt Reeves" });
         modelBuilder.Entity<Actor>().HasData(new List<object>
         {
             new {Movie = movie1, Name = "Robert Pattinson"},
